@@ -35,9 +35,9 @@
     }
     .btn {
       display: block;
-      width: 80%;          /* fleksibel mengikuti layar */
-      max-width: 250px;    /* batas maksimal agar tidak terlalu lebar */
-      margin: 10px auto;   /* tombol rata tengah */
+      width: 80%;
+      max-width: 250px;
+      margin: 10px auto;
       padding: 14px;
       background-color: #007bff;
       color: #fff;
@@ -50,16 +50,12 @@
       background-color: #0056b3;
       transform: scale(1.02);
     }
-    /* Responsif untuk layar kecil */
-    @media (max-width: 480px) {
-      h1 {
-        font-size: 1.2rem;
-      }
-      .btn {
-        width: 100%;       /* di layar HP tombol full width */
-        font-size: 0.9rem;
-        padding: 12px;
-      }
+    /* Bagian tombol terkunci */
+    .locked {
+      background-color: #ccc;
+      color: #666;
+      pointer-events: none; /* tidak bisa diklik */
+      cursor: not-allowed;
     }
   </style>
 </head>
@@ -69,10 +65,11 @@
     <h1>Pilih Hari Ujian</h1>
     <p>Silakan pilih hari ujian Anda:</p>
 
+    <!-- Contoh: Senin aktif, hari lain dikunci -->
     <a href="ujian-senin.html" class="btn">Senin</a>
-    <a href="ujian-selasa.html" class="btn">Selasa</a>
-    <a href="ujian-rabu.html" class="btn">Rabu</a>
-    <a href="ujian-kamis.html" class="btn">Kamis</a>
+    <a href="ujian-selasa.html" class="btn locked">Selasa (Terkunci)</a>
+    <a href="ujian-rabu.html" class="btn locked">Rabu (Terkunci)</a>
+    <a href="ujian-kamis.html" class="btn locked">Kamis (Terkunci)</a>
   </div>
 
 </body>
