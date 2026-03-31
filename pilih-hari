@@ -66,7 +66,7 @@
     <p>Silakan pilih hari ujian Anda:</p>
 
     <!-- Contoh: Senin aktif, hari lain dikunci -->
-    <a href="ujian-senin.html" class="btn">Senin</a>
+    <a href="hari-senin.html" class="btn">Senin</a>
     <a href="ujian-selasa.html" class="btn locked">Selasa (Terkunci)</a>
     <a href="ujian-rabu.html" class="btn locked">Rabu (Terkunci)</a>
     <a href="ujian-kamis.html" class="btn locked">Kamis (Terkunci)</a>
