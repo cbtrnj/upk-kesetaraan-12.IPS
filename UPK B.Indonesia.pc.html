@@ -1,4 +1,3 @@
-<!-- ====== VERSI FINAL UPK BAHASA INDONESIA – PAKET C ====== -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -7,9 +6,14 @@
 <title>UPK Bahasa Indonesia</title>
 
 <style>
+
+/* RESET */
+* { box-sizing: border-box; }
+
+/* BODY */
 body {
   margin:0;
-  font-family: Arial;
+  font-family: Arial, sans-serif;
   background:#f4f4f4;
 }
 
@@ -25,42 +29,75 @@ body {
   padding:10px;
 }
 
+.header h2 { margin:5px 0; }
+
 #timer {
   background:red;
-  padding:5px;
+  padding:8px;
   font-weight:bold;
+  font-size:18px;
 }
 
 /* CONTENT */
 .content {
-  margin-top:220px;
-  padding:20px;
-  max-width:900px;
-  margin-left:auto;
-  margin-right:auto;
+  margin-top:160px;
+  padding:15px;
+  max-width:800px;
+  margin:auto;
 }
 
 .hidden { display:none; }
 
-button {
-  padding:10px 20px;
-  margin:10px 5px;
-  background:#007bff;
-  color:#fff;
-  border:none;
-  border-radius:5px;
-  cursor:pointer;
-  position:relative;
-  z-index:10;
+/* LIST */
+ol { padding-left:20px; }
+li { margin-bottom:15px; }
+
+/* RADIO */
+label {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin:6px 0;
 }
 
-button:hover { background:#0056b3; }
+input[type="radio"] {
+  transform: scale(1.2);
+}
 
+/* INPUT */
 input, textarea {
   width:100%;
   padding:10px;
   margin-top:5px;
+  border-radius:5px;
+  border:1px solid #ccc;
 }
+
+/* TEXTAREA */
+textarea { min-height:80px; }
+
+/* BUTTON */
+button {
+  display:block;
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+  background:#007bff;
+  color:#fff;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+button:hover { background:#0056b3; }
+
+/* MOBILE */
+@media (max-width:600px){
+  .content { margin-top:120px; padding:10px; }
+  .header h2 { font-size:18px; }
+  #timer { font-size:16px; }
+}
+
 </style>
 </head>
 
