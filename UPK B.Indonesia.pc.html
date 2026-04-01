@@ -590,8 +590,7 @@
     });
   }
 
-  window.onload = function(){
-    // Tombol navigasi
+  document.addEventListener("DOMContentLoaded", function(){
     document.getElementById("btnNextIsian")
       .addEventListener("click", ()=> nextSection("sectionIsian","sectionPG"));
 
@@ -603,7 +602,8 @@
 
     document.getElementById("btnBackUraian")
       .addEventListener("click", ()=> nextSection("sectionUraian","sectionPG"));
-  };
+  }
+
 </script>
 </body>
 </html>
