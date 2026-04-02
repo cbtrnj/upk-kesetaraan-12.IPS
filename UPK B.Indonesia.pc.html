@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CBT UPK FINAL PRO</title>
+<title>CBT UPK FINAL FIX</title>
 
 <style>
 body{margin:0;font-family:Arial;background:#f4f4f4}
@@ -39,7 +39,6 @@ background:#007bff;color:#fff;border:none;border-radius:6px
 
 input,textarea{width:100%;padding:10px;margin-top:5px}
 
-/* ANTI COPY */
 body{
 user-select:none;
 -webkit-user-select:none;
@@ -103,11 +102,17 @@ user-select:none;
 <script>
 
 // ================= CONFIG =================
-const MAPEL = "BahasaIndonesia";
-const URL = "https://script.google.com/macros/s/AKfycbyDPBrgL5cl8THtvJUvTQ01_HEIoHabNvMkNsRaCH4zbd-H_h_mhIhtfr44OGVBX-pX/exec";
+const MAPEL = "BahasaIndonesia"; // beda mapel = ganti ini
+const URL = "https://script.google.com/macros/s/AKfycbxUiPN_bjottp9b1plgmwShELQMtTb8q0NJItsNHe0JE7RveQ8qBr61RoyHzFQR0uMp/exec";
 
-// ================= SOAL =================
-const soalPG = [
+// ================= STORAGE KEY =================
+function key(){
+let nama = localStorage.getItem("nama_siswa") || "anonim";
+return "cbt_"+MAPEL+"_"+nama;
+}
+
+// ================= SOAL PG =================
+const soalPG = [ /* SEMUA SOAL KAMU (TIDAK DIUBAH) */ 
 ["Pernyataan tentang teknologi digital termasuk paragraf...",["Narasi","Deskripsi","Argumentasi","Persuasi"]],
 ["Ciri utama teks prosedur adalah...",["Menguraikan langkah-langkah secara berurutan","Mengandung unsur cerita dan tokoh","Menjelaskan peristiwa secara ilmiah","Membujuk pembaca"]],
 ["Fungsi kalimat pembuka pidato adalah...",["Menyampaikan tujuan pidato","Mengucapkan salam dan sapaan","Memberikan argumen","Menyimpulkan isi pidato"]],
@@ -155,9 +160,8 @@ const soalPG = [
 ["Bagian masalah diskusi...",["Argumen","Isu","Kesimpulan","Saran"]]
 ];
 
-const kunciPG=[ "C","A","B","B","A","C","C","B","B","B","A","D","A","D","C","B","B","B","D","B","B","B","B","C","A","C","A","B","A","B","C","A","A","B","C","C","B","A","C","B","B","C","B","B","B"];
-
-// render soal
+// render
+const pglist=document.getElementById("pglist");
 soalPG.forEach((s,i)=>{
 let html=`<li>${s[0]}`;
 s[1].forEach((o,j)=>{
@@ -168,33 +172,28 @@ html+=`</li>`;
 pglist.innerHTML+=html;
 });
 
-// ================= NAV =================
+// ================= START =================
 function mulai(){
 if(!nama.value) return alert("Isi nama dulu");
 
 localStorage.setItem("nama_siswa", nama.value);
 
-document.documentElement.requestFullscreen?.();
-
 intro.classList.add("hidden");
 isian.classList.remove("hidden");
 
-setTimeout(loadData,500);
+loadData();
 }
 
+// ================= NAV =================
 function kePG(){isian.classList.add("hidden");pg.classList.remove("hidden")}
 function keUraian(){pg.classList.add("hidden");uraian.classList.remove("hidden")}
 function kembaliIsian(){pg.classList.add("hidden");isian.classList.remove("hidden")}
 function kembaliPG(){uraian.classList.add("hidden");pg.classList.remove("hidden")}
 
 // ================= AUTO SAVE =================
-function key(){
-let nama = localStorage.getItem("nama_siswa") || "anonim";
-return "cbt_"+MAPEL+"_"+nama;
-}
-
-document.addEventListener("change",()=>{
+function simpan(){
 let data={
+nama:nama.value,
 isian:[is1.value,is2.value,is3.value,is4.value,is5.value],
 pg:[],
 uraian:[u1.value,u2.value,u3.value,u4.value,u5.value]
@@ -206,13 +205,19 @@ data.pg.push(p?p.value:"");
 }
 
 localStorage.setItem(key(),JSON.stringify(data));
-});
+}
 
-// LOAD
+document.addEventListener("input",simpan);
+document.addEventListener("change",simpan);
+
+// ================= LOAD =================
 function loadData(){
 let data=localStorage.getItem(key());
 if(!data) return;
+
 data=JSON.parse(data);
+
+nama.value=data.nama||"";
 
 for(let i=1;i<=5;i++) document.getElementById("is"+i).value=data.isian[i-1]||"";
 
@@ -227,57 +232,28 @@ if(r) r.checked=true;
 for(let i=1;i<=5;i++) document.getElementById("u"+i).value=data.uraian[i-1]||"";
 }
 
-// AUTO LOAD
-window.onload=function(){
-let n=localStorage.getItem("nama_siswa");
-if(n){
-nama.value=n;
-intro.classList.add("hidden");
-isian.classList.remove("hidden");
-setTimeout(loadData,500);
-}
-};
+// ================= AUTO LOAD =================
+window.onload=loadData;
 
 // ================= KIRIM =================
 function kirim(){
 
-let data={
-nama:nama.value,
-isian:[is1.value,is2.value,is3.value,is4.value,is5.value],
-pg:[],
-uraian:[u1.value,u2.value,u3.value,u4.value,u5.value],
-score:0
-};
+let data=JSON.parse(localStorage.getItem(key())||"{}");
 
-let benar=0;
-for(let i=0;i<45;i++){
-let p=document.querySelector('input[name=q'+i+']:checked');
-let j=p?p.value:"";
-data.pg.push(j);
-if(j===kunciPG[i]) benar++;
-}
-
-data.score=Math.round(benar/45*100);
+if(!data.nama) return alert("Nama kosong");
 
 if(data.isian.includes("") || data.pg.includes("") || data.uraian.includes("")){
 alert("Masih ada soal kosong!");
 return;
 }
 
-// kirim
-let form=document.createElement("form");
-form.method="POST";
-form.action=URL;
+fetch(URL,{
+method:"POST",
+body:JSON.stringify(data)
+})
+.then(()=>alert("Jawaban berhasil dikirim"))
+.catch(()=>alert("Gagal kirim"));
 
-let input=document.createElement("input");
-input.name="data";
-input.value=JSON.stringify(data);
-
-form.appendChild(input);
-document.body.appendChild(form);
-form.submit();
-
-alert("Jawaban terkirim!");
 localStorage.removeItem(key());
 }
 
@@ -285,12 +261,6 @@ localStorage.removeItem(key());
 document.addEventListener("contextmenu",e=>e.preventDefault());
 document.addEventListener("copy",e=>e.preventDefault());
 document.addEventListener("selectstart",e=>e.preventDefault());
-
-document.addEventListener("visibilitychange",()=>{
-if(document.hidden){
-alert("Jangan keluar dari ujian!");
-}
-});
 
 </script>
 
