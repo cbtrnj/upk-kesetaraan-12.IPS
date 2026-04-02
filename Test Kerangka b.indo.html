@@ -3,105 +3,89 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CBT PKN Paket C</title>
+<title>CBT PKN</title>
 
 <style>
-body{margin:0;font-family:Arial;background:#f4f4f4;user-select:none;-webkit-user-select:none;}
+*{box-sizing:border-box;}
+html,body{margin:0;font-family:Arial;background:#f4f4f4;overflow-x:hidden;}
 
 .header{
 position:fixed;top:0;width:100%;
-background:#007bff;color:#fff;
-text-align:center;padding:10px;z-index:999
+background:#007bff;color:#fff;text-align:center;padding:10px;z-index:999;
 }
+.logo{width:60px;margin:auto;display:block;}
+.timer{font-size:18px;font-weight:bold;margin-top:5px;}
 
-.logo{width:60px;display:block;margin:auto;}
+.container{max-width:600px;margin:auto;padding:15px;margin-top:180px;}
 
-.container{
-max-width:600px; /* pas di HP */
-margin:auto;padding:10px;margin-top:160px
+li{margin-bottom:40px;line-height:1.6;}
+
+.opsi{
+display:block;padding:12px;margin:8px 0;
+border:1px solid #ccc;border-radius:8px;background:#fff;cursor:pointer;
 }
+.opsi.selected{background:#28a745;color:#fff;}
 
-.hidden{display:none}
-
-#pglist li {margin-bottom:20px;line-height:1.5;}
-
-.opsi {
-  display:block;
-  padding:10px;
-  margin:6px 0;
-  border:1px solid #ccc;
-  border-radius:6px;
-  background:#fff;
-  cursor:pointer;
-  font-size:14px;
-  transition:all 0.2s ease;
+textarea,input{
+width:100%;padding:12px;margin-top:8px;font-size:15px;
 }
-.opsi.selected {
-  background:#28a745;
-  color:#fff;
-  border-color:#28a745;
-}
+textarea{min-height:150px;max-height:300px;resize:vertical;}
 
 button{
-width:100%;padding:12px;margin-top:10px;
-background:#007bff;color:#fff;border:none;border-radius:6px;
-font-size:15px;
+width:100%;padding:14px;margin-top:10px;
+background:#007bff;color:#fff;border:none;border-radius:8px;
 }
 
-input,textarea{
-width:100%;padding:10px;margin-top:5px;
-font-size:14px;
-box-sizing:border-box;
-}
+.hidden{display:none;}
 </style>
 </head>
 
 <body>
+
 <div class="header">
-  <img src="logo.png" class="logo">
-  <h2>UJIAN PENDIDIKAN KESETARAAN (UPK)</h2>
-  <h3>PKBM Ristek Nusantara Jaya</h3>
+<img src="https://i.imgur.com/J1mKppg.png" class="logo">
+<div>UJIAN PENDIDIKAN KESETARAAN (UPK)</div>
+<div>PKBM Ristek Nusantara Jaya</div>
+<div id="timer">90:00</div>
 </div>
 
 <div class="container">
 
-<!-- Identitas Peserta -->
 <section id="identitasSection">
-  <h3>Identitas Peserta</h3>
-  Nama Lengkap: <input id="nama">
-  <button onclick="nextSection('isianSection')">Mulai Ujian</button>
+<h3>Nama Peserta</h3>
+<input id="nama">
+<button onclick="mulai()">Mulai Ujian</button>
 </section>
 
-<!-- Isian -->
 <section id="isianSection" class="hidden">
-  <h3>Isian Singkat</h3>
-  <ul id="isianlist"></ul>
-  <button onclick="nextSection('pgSection')">Lanjut ke Pilihan Ganda</button>
+<h3>Isian</h3>
+<ul id="isianlist"></ul>
+<button onclick="next('pgSection')">Lanjut</button>
 </section>
 
-<!-- Pilihan Ganda -->
 <section id="pgSection" class="hidden">
-  <h3>Pilihan Ganda</h3>
-  <ul id="pglist"></ul>
-  <button onclick="nextSection('uraianSection')">Lanjut ke Uraian</button>
-  <button onclick="nextSection('isianSection')">Kembali ke Isian</button>
+<h3>Pilihan Ganda</h3>
+<ul id="pglist"></ul>
+<button onclick="next('uraianSection')">Lanjut</button>
+<button onclick="next('isianSection')">⬅ Kembali</button>
 </section>
 
-<!-- Uraian -->
 <section id="uraianSection" class="hidden">
-  <h3>Uraian</h3>
-  <ul id="uraianlist"></ul>
-  <button onclick="nextSection('pgSection')">Kembali ke Pilihan Ganda</button>
-  <button onclick="kirim()">Kirim Jawaban</button>
+<h3>Uraian</h3>
+<ul id="uraianlist"></ul>
+<button onclick="next('pgSection')">⬅ Kembali</button>
+<button onclick="kirim()">Kirim</button>
 </section>
 
 </div>
 
 <script>
-const URL="https://script.google.com/macros/s/AKfycbzH9a-CMN3KBkbaNAI5At7zwe631DB348lbShyifZ0dmiMb3XT-d6eMapvxkWvuBhAJ/exec";
 const MAPEL="PKN";
+const DURASI=90;
+let waktu=0,interval;
 
-// Soal Isian
+/* ================= SOAL ================= */
+
 let soalIsian=[
 "Nilai utama yang terkandung dalam sila keempat Pancasila adalah _____________ dalam pengambilan keputusan bersama.",
 "Warga negara memiliki hak dan kewajiban untuk _____________ dalam pemilihan umum.",
@@ -110,16 +94,54 @@ let soalIsian=[
 "Perwujudan sikap toleransi terhadap keberagaman suku dan agama merupakan bagian dari pengamalan sila _____________ Pancasila."
 ];
 
-// Soal PG
 let soalPG=[
 ["Nilai-nilai yang terkandung dalam Pancasila bersifat:",["Individualistis","Universal","Sekuler","Kapitalis"]],
 ["Undang-Undang Dasar Negara Republik Indonesia Tahun 1945 merupakan:",["Undang-undang biasa","Peraturan pemerintah","Hukum dasar tertulis","Keputusan presiden"]],
 ["Lembaga negara yang memiliki wewenang menguji undang-undang terhadap UUD 1945 adalah:",["DPR","Mahkamah Konstitusi","Presiden","Komisi Yudisial"]],
 ["Hak asasi manusia yang dijamin dalam UUD 1945 mencakup, kecuali:",["Hak hidup","Hak kepemilikan pribadi","Hak monopoli atas sumber daya alam","Hak berpendapat"]],
-["Prinsip demokrasi yang diterapkan di Indonesia adalah:",["Demokrasi liberal","Demokrasi terpimpin","Demokrasi pancasila","Demokrasi totaliter"]]
+["Prinsip demokrasi yang diterapkan di Indonesia adalah:",["Demokrasi liberal","Demokrasi terpimpin","Demokrasi pancasila","Demokrasi totaliter"]],
+["Berikut ini yang bukan merupakan ciri negara hukum adalah:",["Adanya perlindungan HAM","Pemerintah berdasarkan kekuasaan mutlak","Kekuasaan kehakiman yang bebas","Supremasi hukum"]],
+["Dalam sistem pemerintahan presidensial, presiden berperan sebagai:",["Kepala negara dan kepala pemerintahan","Hanya kepala negara","Hanya kepala pemerintahan","Ketua Mahkamah Agung"]],
+["Salah satu kewajiban warga negara menurut UUD 1945 adalah:",["Mendapatkan pendidikan","Membayar pajak","Memilih presiden","Mendapatkan pekerjaan"]],
+["Contoh perilaku yang mencerminkan sikap toleransi adalah:",["Memaksakan kehendak","Menghargai perbedaan pendapat","Menyebarkan hoaks","Diskriminasi"]],
+["Penegakan hukum di Indonesia sering terhambat oleh:",["Transparansi","Korupsi","Partisipasi publik","Supremasi hukum"]],
+["Salah satu tantangan demokrasi di era digital adalah:",["Kurang SDM","Disinformasi","Kurang teknologi","Partisipasi tinggi"]],
+["Fungsi utama DPR adalah:",["Mengawasi presiden","Membentuk undang-undang","Melantik presiden","Mengadili"]],
+["Pelanggaran HAM dapat diadukan ke:",["Kemendikbud","Komnas HAM","MA","KPU"]],
+["Ancaman integrasi nasional:",["Persatuan","Konflik horizontal","Kerjasama","Toleransi"]],
+["Hak berorganisasi diatur dalam:",["Pasal 28","31","33","37"]],
+["Bhinneka Tunggal Ika berarti:",["Persatuan dalam perbedaan","Keseragaman","Ketidakadilan","Ketimpangan"]],
+["Pengawas pemilu:",["KPU","Bawaslu","DPR","MA"]],
+["Partisipasi warga:",["Golput","Ikut kegiatan sosial","Langgar aturan","Pungli"]],
+["Persamaan hukum:",["Hukum utk pejabat","Semua sama","Hukum mudah diubah","Tidak mengikat"]],
+["Dampak globalisasi:",["Penguatan lokal","Hilang budaya","Pemantapan","Nasionalisme"]],
+["Lingkungan:",["Hak pribadi","Kewajiban warga","Pemerintah saja","HAM"]],
+["Wewenang MA:",["Sengketa pemilu","Uji UU","Kasasi","Melantik"]],
+["Otonomi daerah:",["Sentralisasi","Partisipasi","Kurangi DPRD","Tambah beban"]],
+["Penyalahgunaan kekuasaan:",["Demokrasi","Korupsi","Reformasi","Desentralisasi"]],
+["Keadilan sosial:",["Diskriminasi","Bantu korban","Menolak bantu","Abaikan"]],
+["Pengawas eksternal:",["BPK","KPK","Polri","BIN"]],
+["Supremasi hukum:",["Taat hukum","Hanya pejabat","Diskriminatif","Diabaikan"]],
+["Hak berpendapat:",["Pasal 27","28E","29","31"]],
+["Anti korupsi:",["Suap","Lapor","Sembunyi","Biarkan"]],
+["Kebebasan pers:",["28F","33","36C","37"]],
+["Hak pendidikan:",["Memperoleh pendidikan","Membatasi","Memberhentikan","Batasi info"]],
+["Persatuan:",["Menghargai","Mencela","Hasut","Abaikan"]],
+["Kebijakan publik:",["Untungkan kelompok","Aspiratif","Diskriminatif","Abaikan"]],
+["HAM tantangan:",["Lemah hukum","Banyak lembaga","Penduduk","Partisipasi"]],
+["Hak kerja:",["Pasal 27(2)","29","31","33"]],
+["Komisi Yudisial:",["Angkat hakim","Awasi hakim","Adili","Buat UU"]],
+["HAM berat:",["Pencurian","Genosida","Penipuan","Perusakan"]],
+["Anti korupsi lembaga:",["KPK","BPK","KPU","DPR"]],
+["Gotong royong:",["Kerja bakti","Biarkan","Minta saja","Abaikan"]],
+["Keadilan demokrasi:",["Untung pemerintah","Setara","Istimewa","Mutlak"]],
+["Sila kedua:",["Membantu","Benci","Tolak","Abaikan"]],
+["Demokrasi sekolah:",["Pilih OSIS","Ditunjuk","Satu orang","Tidak ikut"]],
+["Supremasi hukum penting:",["Lindungi hak","Kuatkan kuasa","Kurangi partisipasi","Abaikan"]],
+["Hambatan otonomi:",["Ketimpangan","Partisipasi","Infrastruktur","Pelayanan"]],
+["Implementasi Pancasila:",["Intoleran","Menghargai","Menolak","Egois"]]
 ];
 
-// Soal Uraian
 let soalUraian=[
 "Jelaskan bagaimana prinsip musyawarah mufakat dapat diterapkan dalam menyelesaikan konflik di lingkungan sekolah!",
 "Analisislah dampak positif dan negatif globalisasi terhadap integrasi nasional Indonesia!",
@@ -128,288 +150,112 @@ let soalUraian=[
 "Jelaskan pentingnya peran serta generasi muda dalam menjaga persatuan dan kesatuan bangsa di era digital!"
 ];
 
-// Render Isian
+/* ================= RENDER ================= */
+function render(){
 soalIsian.forEach((s,i)=>{
-  isianlist.innerHTML+=`<li>${i+1}. ${s}<br><input id="isian${i}"></li>`;
+isianlist.innerHTML+=`<li>${i+1}. ${s}<textarea id="isian${i}"></textarea></li>`;
 });
 
-// Render PG
 soalPG.forEach((s,i)=>{
-  let html=`<li>${i+1}. ${s[0]}<br>`;
-  s[1].forEach((o,j)=>{
-    let h=["A","B","C","D"][j];
-    html+=`<div class="opsi" data-name="q${i}" data-value="${h}">${h}. ${o}</div>`;
-  });
-  html+=`</li>`;
-  pglist.innerHTML+=html;
+let html=`<li>${i+1}. ${s[0]}`;
+s[1].forEach((o,j)=>{
+let h=["A","B","C","D"][j];
+html+=`<div class="opsi" data-name="q${i}" data-value="${h}">${h}. ${o}</div>`;
+});
+html+=`</li>`;
+pglist.innerHTML+=html;
 });
 
-// Render Uraian
 soalUraian.forEach((s,i)=>{
-  uraianlist.innerHTML+=`<li>${i+1}. ${s}<br><textarea id="uraian${i}"></textarea></li>`;
+uraianlist.innerHTML+=`<li>${i+1}. ${s}<textarea id="uraian${i}"></textarea></li>`;
 });
-
-// Navigasi antar section
-function nextSection(id){
-  document.querySelectorAll("section").forEach(sec=>sec.classList.add("hidden"));
-  document.getElementById(id).classList.remove("hidden");
 }
 
-// Event klik opsi PG
-document.addEventListener("click",function(e){
-  if(e.target.classList.contains("opsi")){
-    let name=e.target.getAttribute("data-name");
-    document.querySelectorAll(`.opsi[data-name="${name}"]`).forEach(el=>el.classList.remove("selected"));
-    e.target.classList.add("selected");
-    simpan();
-  }
-});
+/* NAV */
+function next(id){
+document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
+document.getElementById(id).classList.remove("hidden");
+}
 
-// Simpan ke localStorage
+/* TIMER */
+function mulai(){
+next('isianSection');
+
+waktu=localStorage.getItem("UPK_"+MAPEL+"_WAKTU") || DURASI*60;
+
+interval=setInterval(()=>{
+waktu--;
+localStorage.setItem("UPK_"+MAPEL+"_WAKTU",waktu);
+
+let m=Math.floor(waktu/60);
+let s=waktu%60;
+timer.innerHTML=String(m).padStart(2,'0')+":"+String(s).padStart(2,'0');
+
+if(waktu<=0){
+clearInterval(interval);
+alert("Waktu habis");
+kirim();
+}
+},1000);
+}
+
+/* SIMPAN */
 function simpan(){
-  let data={nama:nama.value,matpel:MAPEL,isian:[],pg:[],uraian:[]};
-  soalIsian.forEach((s,i)=>data.isian.push(document.getElementById("isian"+i).value));
-  for(let i=0;i<soalPG.length;i++){
-    let p=document.querySelector('.opsi.selected[data-name="q'+i+'"]');
-    data.pg.push(p?p.getAttribute("data-value"):"");
-  }
-  soalUraian.forEach((s,i)=>data.uraian.push(document.getElementById("uraian"+i).value));
-  localStorage.setItem("UPK_PKN",JSON.stringify(data));
+let data={nama:nama.value,isian:[],pg:[],uraian:[]};
+
+soalIsian.forEach((_,i)=>data.isian.push(document.getElementById("isian"+i).value));
+
+soalPG.forEach((_,i)=>{
+let p=document.querySelector(`.opsi.selected[data-name="q${i}"]`);
+data.pg.push(p?p.dataset.value:"");
+});
+
+soalUraian.forEach((_,i)=>data.uraian.push(document.getElementById("uraian"+i).value));
+
+localStorage.setItem("UPK_"+MAPEL+"_DATA",JSON.stringify(data));
 }
 
-// Load jawaban saat refresh
-function loadData(){
-  let data=JSON.parse(localStorage.getItem("UPK_PKN")||"{}");
-  if(data.nama) nama.value=data.nama;
-  if(data.isian) data.isian.forEach((v,i)=>document.getElementById("isian"+i).value=v);
-  if(data.pg) data.pg.forEach((v,i)=>{
-    if(v){
-      let r=document.querySelector(`.opsi[data-name="q${i}"][data-value="${v}"]`);
-      if(r) r.classList.add("selected");
-    }
-  });
-  if(data.uraian) data.uraian.forEach((v,i)=>document.getElementById("uraian"+i).value=v);
-}
-loadData();
+document.addEventListener("input",simpan);
 
-// Kirim ke Google Sheet
+document.addEventListener("click",e=>{
+if(e.target.classList.contains("opsi")){
+let name=e.target.dataset.name;
+document.querySelectorAll(`[data-name="${name}"]`).forEach(el=>el.classList.remove("selected"));
+e.target.classList.add("selected");
+simpan();
+}
+});
+
+/* LOAD */
+function load(){
+let data=JSON.parse(localStorage.getItem("UPK_"+MAPEL+"_DATA")||"{}");
+if(data.nama) nama.value=data.nama;
+
+if(data.isian) data.isian.forEach((v,i)=>document.getElementById("isian"+i).value=v||"");
+
+if(data.pg) data.pg.forEach((v,i)=>{
+if(v){
+let el=document.querySelector(`.opsi[data-name="q${i}"][data-value="${v}"]`);
+if(el) el.classList.add("selected");
+}
+});
+
+if(data.uraian) data.uraian.forEach((v,i)=>document.getElementById("uraian"+i).value=v||"");
+}
+
+/* KIRIM */
 function kirim(){
-  let data=JSON.parse(localStorage.getItem("UPK_PBaik Nur, aku kirimkan versi **full HTML CBT PKN** yang sudah rapi ala UTBK, dengan alur jelas dan tombol **Mulai Ujian** berfungsi.  
-
----
-
-### 📌 Full HTML CBT PKN
-
-```html
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CBT PKN Paket C</title>
-
-<style>
-body{margin:0;font-family:Arial;background:#f4f4f4;user-select:none;-webkit-user-select:none;}
-
-.header{
-position:fixed;top:0;width:100%;
-background:#007bff;color:#fff;
-text-align:center;padding:10px;z-index:999
+alert("Jawaban terkirim (mode demo)");
+localStorage.removeItem("UPK_"+MAPEL+"_DATA");
+localStorage.removeItem("UPK_"+MAPEL+"_WAKTU");
 }
 
-.logo{width:60px;display:block;margin:auto;}
-
-.container{
-max-width:600px; /* pas di HP */
-margin:auto;padding:10px;margin-top:160px
+/* INIT */
+window.onload=function(){
+render();
+load();
 }
-
-.hidden{display:none}
-
-#pglist li {margin-bottom:20px;line-height:1.5;}
-
-.opsi {
-  display:block;
-  padding:10px;
-  margin:6px 0;
-  border:1px solid #ccc;
-  border-radius:6px;
-  background:#fff;
-  cursor:pointer;
-  font-size:14px;
-  transition:all 0.2s ease;
-}
-.opsi.selected {
-  background:#28a745;
-  color:#fff;
-  border-color:#28a745;
-}
-
-button{
-width:100%;padding:12px;margin-top:10px;
-background:#007bff;color:#fff;border:none;border-radius:6px;
-font-size:15px;
-}
-
-input,textarea{
-width:100%;padding:10px;margin-top:5px;
-font-size:14px;
-box-sizing:border-box;
-}
-</style>
-</head>
-
-<body>
-<div class="header">
-  <img src="logo.png" class="logo">
-  <h2>UJIAN PENDIDIKAN KESETARAAN (UPK)</h2>
-  <h3>PKBM Ristek Nusantara Jaya</h3>
-</div>
-
-<div class="container">
-
-<!-- Identitas Peserta -->
-<section id="identitasSection">
-  <h3>Identitas Peserta</h3>
-  Nama Lengkap: <input id="nama">
-  <button onclick="nextSection('isianSection')">Mulai Ujian</button>
-</section>
-
-<!-- Isian -->
-<section id="isianSection" class="hidden">
-  <h3>Isian Singkat</h3>
-  <ul id="isianlist"></ul>
-  <button onclick="nextSection('pgSection')">Lanjut ke Pilihan Ganda</button>
-</section>
-
-<!-- Pilihan Ganda -->
-<section id="pgSection" class="hidden">
-  <h3>Pilihan Ganda</h3>
-  <ul id="pglist"></ul>
-  <button onclick="nextSection('uraianSection')">Lanjut ke Uraian</button>
-  <button onclick="nextSection('isianSection')">Kembali ke Isian</button>
-</section>
-
-<!-- Uraian -->
-<section id="uraianSection" class="hidden">
-  <h3>Uraian</h3>
-  <ul id="uraianlist"></ul>
-  <button onclick="nextSection('pgSection')">Kembali ke Pilihan Ganda</button>
-  <button onclick="kirim()">Kirim Jawaban</button>
-</section>
-
-</div>
-
-<script>
-const URL="https://script.google.com/macros/s/AKfycbzH9a-CMN3KBkbaNAI5At7zwe631DB348lbShyifZ0dmiMb3XT-d6eMapvxkWvuBhAJ/exec";
-const MAPEL="PKN";
-
-// Soal Isian
-let soalIsian=[
-"Nilai utama yang terkandung dalam sila keempat Pancasila adalah _____________ dalam pengambilan keputusan bersama.",
-"Warga negara memiliki hak dan kewajiban untuk _____________ dalam pemilihan umum.",
-"Salah satu bentuk pelaksanaan supremasi hukum di Indonesia adalah adanya _____________ dalam menyelesaikan sengketa konstitusi.",
-"Prinsip checks and balances dalam sistem pemerintahan bertujuan untuk mencegah terjadinya _____________ kekuasaan.",
-"Perwujudan sikap toleransi terhadap keberagaman suku dan agama merupakan bagian dari pengamalan sila _____________ Pancasila."
-];
-
-// Soal PG
-let soalPG=[
-["Nilai-nilai yang terkandung dalam Pancasila bersifat:",["Individualistis","Universal","Sekuler","Kapitalis"]],
-["Undang-Undang Dasar Negara Republik Indonesia Tahun 1945 merupakan:",["Undang-undang biasa","Peraturan pemerintah","Hukum dasar tertulis","Keputusan presiden"]],
-["Lembaga negara yang memiliki wewenang menguji undang-undang terhadap UUD 1945 adalah:",["DPR","Mahkamah Konstitusi","Presiden","Komisi Yudisial"]],
-["Hak asasi manusia yang dijamin dalam UUD 1945 mencakup, kecuali:",["Hak hidup","Hak kepemilikan pribadi","Hak monopoli atas sumber daya alam","Hak berpendapat"]],
-["Prinsip demokrasi yang diterapkan di Indonesia adalah:",["Demokrasi liberal","Demokrasi terpimpin","Demokrasi pancasila","Demokrasi totaliter"]]
-];
-
-// Soal Uraian
-let soalUraian=[
-"Jelaskan bagaimana prinsip musyawarah mufakat dapat diterapkan dalam menyelesaikan konflik di lingkungan sekolah!",
-"Analisislah dampak positif dan negatif globalisasi terhadap integrasi nasional Indonesia!",
-"Bagaimana upaya yang dapat dilakukan masyarakat untuk mencegah pelanggaran hak asasi manusia di lingkungan sekitar?",
-"Berikan contoh konkret penerapan nilai keadilan sosial dalam kehidupan sehari-hari dan jelaskan alasannya!",
-"Jelaskan pentingnya peran serta generasi muda dalam menjaga persatuan dan kesatuan bangsa di era digital!"
-];
-
-// Render Isian
-soalIsian.forEach((s,i)=>{
-  isianlist.innerHTML+=`<li>${i+1}. ${s}<br><input id="isian${i}"></li>`;
-});
-
-// Render PG
-soalPG.forEach((s,i)=>{
-  let html=`<li>${i+1}. ${s[0]}<br>`;
-  s[1].forEach((o,j)=>{
-    let h=["A","B","C","D"][j];
-    html+=`<div class="opsi" data-name="q${i}" data-value="${h}">${h}. ${o}</div>`;
-  });
-  html+=`</li>`;
-  pglist.innerHTML+=html;
-});
-
-// Render Uraian
-soalUraian.forEach((s,i)=>{
-  uraianlist.innerHTML+=`<li>${i+1}. ${s}<br><textarea id="uraian${i}"></textarea></li>`;
-});
-
-// Navigasi antar section
-function nextSection(id){
-  document.querySelectorAll("section").forEach(sec=>sec.classList.add("hidden"));
-  document.getElementById(id).classList.remove("hidden");
-}
-
-// Event klik opsi PG
-document.addEventListener("click",function(e){
-  if(e.target.classList.contains("opsi")){
-    let name=e.target.getAttribute("data-name");
-    document.querySelectorAll(`.opsi[data-name="${name}"]`).forEach(el=>el.classList.remove("selected"));
-    e.target.classList.add("selected");
-    simpan();
-  }
-});
-
-// Simpan ke localStorage
-function simpan(){
-  let data={nama:nama.value,matpel:MAPEL,isian:[],pg:[],uraian:[]};
-  soalIsian.forEach((s,i)=>data.isian.push(document.getElementById("isian"+i).value));
-  for(let i=0;i<soalPG.length;i++){
-    let p=document.querySelector('.opsi.selected[data-name="q'+i+'"]');
-    data.pg.push(p?p.getAttribute("data-value"):"");
-  }
-  soalUraian.forEach((s,i)=>data.uraian.push(document.getElementById("uraian"+i).value));
-  localStorage.setItem("UPK_PKN",JSON.stringify(data));
-}
-
-// Load jawaban saat refresh
-function loadData(){
-  let data=JSON.parse(localStorage.getItem("UPK_PKN")||"{}");
-  if(data.nama) nama.value=data.nama;
-  if(data.isian) data.isian.forEach((v,i)=>document.getElementById("isian"+i).value=v);
-  if(data.pg) data.pg.forEach((v,i)=>{
-    if(v){
-      let r=document.querySelector(`.opsi[data-name="q${i}"][data-value="${v}"]`);
-      if(r) r.classList.add("selected");
-    }
-  });
-  if(data.uraian) data.uraian.forEach((v,i)=>document.getElementById("uraian"+i).value=v);
-}
-loadData();
-
-// Kirim ke Google Sheet
-function kirim(){
-  let data=JSON.parse(localStorage.getItem("UPK_PKN")||"{}");
-  fetch(URL,{method:"POST",body:JSON.stringify(data)})
-    .then(r=>r.text())
-    .then(t=>alert("Jawaban terkirim: "+t));
-}
-
-// Anti Screenshot sederhana
-document.addEventListener("keydown",function(e){
-  if(e.key==="PrintScreen"){
-    alert("Screenshot dilarang!");
-    e.preventDefault();
-  }
-});
 </script>
+
 </body>
 </html>
