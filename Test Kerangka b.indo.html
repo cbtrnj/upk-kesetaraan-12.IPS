@@ -17,7 +17,7 @@ text-align:center;padding:10px;z-index:999
 .logo{width:60px;display:block;margin:auto;}
 
 .container{
-max-width:600px; /* 🔧 disesuaikan agar pas di HP */
+max-width:600px; /* pas di HP */
 margin:auto;padding:10px;margin-top:160px
 }
 
@@ -67,32 +67,32 @@ box-sizing:border-box;
 
 <!-- Identitas Peserta -->
 <section id="identitasSection">
-<h3>Identitas Peserta</h3>
-Nama Lengkap: <input id="nama">
-<button onclick="nextSection('isianSection')">Mulai Ujian</button>
+  <h3>Identitas Peserta</h3>
+  Nama Lengkap: <input id="nama">
+  <button onclick="nextSection('isianSection')">Mulai Ujian</button>
 </section>
 
 <!-- Isian -->
 <section id="isianSection" class="hidden">
-<h3>Isian Singkat</h3>
-<ul id="isianlist"></ul>
-<button onclick="nextSection('pgSection')">Lanjut ke Pilihan Ganda</button>
+  <h3>Isian Singkat</h3>
+  <ul id="isianlist"></ul>
+  <button onclick="nextSection('pgSection')">Lanjut ke Pilihan Ganda</button>
 </section>
 
 <!-- Pilihan Ganda -->
 <section id="pgSection" class="hidden">
-<h3>Pilihan Ganda</h3>
-<ul id="pglist"></ul>
-<button onclick="nextSection('uraianSection')">Lanjut ke Uraian</button>
-<button onclick="nextSection('isianSection')">Kembali ke Isian</button>
+  <h3>Pilihan Ganda</h3>
+  <ul id="pglist"></ul>
+  <button onclick="nextSection('uraianSection')">Lanjut ke Uraian</button>
+  <button onclick="nextSection('isianSection')">Kembali ke Isian</button>
 </section>
 
 <!-- Uraian -->
 <section id="uraianSection" class="hidden">
-<h3>Uraian</h3>
-<ul id="uraianlist"></ul>
-<button onclick="nextSection('pgSection')">Kembali ke Pilihan Ganda</button>
-<button onclick="kirim()">Kirim Jawaban</button>
+  <h3>Uraian</h3>
+  <ul id="uraianlist"></ul>
+  <button onclick="nextSection('pgSection')">Kembali ke Pilihan Ganda</button>
+  <button onclick="kirim()">Kirim Jawaban</button>
 </section>
 
 </div>
@@ -101,7 +101,7 @@ Nama Lengkap: <input id="nama">
 const URL="https://script.google.com/macros/s/AKfycbzH9a-CMN3KBkbaNAI5At7zwe631DB348lbShyifZ0dmiMb3XT-d6eMapvxkWvuBhAJ/exec";
 const MAPEL="PKN";
 
-// 🔧 Soal Isian
+// Soal Isian
 let soalIsian=[
 "Nilai utama yang terkandung dalam sila keempat Pancasila adalah _____________ dalam pengambilan keputusan bersama.",
 "Warga negara memiliki hak dan kewajiban untuk _____________ dalam pemilihan umum.",
@@ -110,7 +110,7 @@ let soalIsian=[
 "Perwujudan sikap toleransi terhadap keberagaman suku dan agama merupakan bagian dari pengamalan sila _____________ Pancasila."
 ];
 
-// 🔧 Soal PG
+// Soal PG
 let soalPG=[
 ["Nilai-nilai yang terkandung dalam Pancasila bersifat:",["Individualistis","Universal","Sekuler","Kapitalis"]],
 ["Undang-Undang Dasar Negara Republik Indonesia Tahun 1945 merupakan:",["Undang-undang biasa","Peraturan pemerintah","Hukum dasar tertulis","Keputusan presiden"]],
@@ -119,7 +119,210 @@ let soalPG=[
 ["Prinsip demokrasi yang diterapkan di Indonesia adalah:",["Demokrasi liberal","Demokrasi terpimpin","Demokrasi pancasila","Demokrasi totaliter"]]
 ];
 
-// 🔧 Soal Uraian
+// Soal Uraian
+let soalUraian=[
+"Jelaskan bagaimana prinsip musyawarah mufakat dapat diterapkan dalam menyelesaikan konflik di lingkungan sekolah!",
+"Analisislah dampak positif dan negatif globalisasi terhadap integrasi nasional Indonesia!",
+"Bagaimana upaya yang dapat dilakukan masyarakat untuk mencegah pelanggaran hak asasi manusia di lingkungan sekitar?",
+"Berikan contoh konkret penerapan nilai keadilan sosial dalam kehidupan sehari-hari dan jelaskan alasannya!",
+"Jelaskan pentingnya peran serta generasi muda dalam menjaga persatuan dan kesatuan bangsa di era digital!"
+];
+
+// Render Isian
+soalIsian.forEach((s,i)=>{
+  isianlist.innerHTML+=`<li>${i+1}. ${s}<br><input id="isian${i}"></li>`;
+});
+
+// Render PG
+soalPG.forEach((s,i)=>{
+  let html=`<li>${i+1}. ${s[0]}<br>`;
+  s[1].forEach((o,j)=>{
+    let h=["A","B","C","D"][j];
+    html+=`<div class="opsi" data-name="q${i}" data-value="${h}">${h}. ${o}</div>`;
+  });
+  html+=`</li>`;
+  pglist.innerHTML+=html;
+});
+
+// Render Uraian
+soalUraian.forEach((s,i)=>{
+  uraianlist.innerHTML+=`<li>${i+1}. ${s}<br><textarea id="uraian${i}"></textarea></li>`;
+});
+
+// Navigasi antar section
+function nextSection(id){
+  document.querySelectorAll("section").forEach(sec=>sec.classList.add("hidden"));
+  document.getElementById(id).classList.remove("hidden");
+}
+
+// Event klik opsi PG
+document.addEventListener("click",function(e){
+  if(e.target.classList.contains("opsi")){
+    let name=e.target.getAttribute("data-name");
+    document.querySelectorAll(`.opsi[data-name="${name}"]`).forEach(el=>el.classList.remove("selected"));
+    e.target.classList.add("selected");
+    simpan();
+  }
+});
+
+// Simpan ke localStorage
+function simpan(){
+  let data={nama:nama.value,matpel:MAPEL,isian:[],pg:[],uraian:[]};
+  soalIsian.forEach((s,i)=>data.isian.push(document.getElementById("isian"+i).value));
+  for(let i=0;i<soalPG.length;i++){
+    let p=document.querySelector('.opsi.selected[data-name="q'+i+'"]');
+    data.pg.push(p?p.getAttribute("data-value"):"");
+  }
+  soalUraian.forEach((s,i)=>data.uraian.push(document.getElementById("uraian"+i).value));
+  localStorage.setItem("UPK_PKN",JSON.stringify(data));
+}
+
+// Load jawaban saat refresh
+function loadData(){
+  let data=JSON.parse(localStorage.getItem("UPK_PKN")||"{}");
+  if(data.nama) nama.value=data.nama;
+  if(data.isian) data.isian.forEach((v,i)=>document.getElementById("isian"+i).value=v);
+  if(data.pg) data.pg.forEach((v,i)=>{
+    if(v){
+      let r=document.querySelector(`.opsi[data-name="q${i}"][data-value="${v}"]`);
+      if(r) r.classList.add("selected");
+    }
+  });
+  if(data.uraian) data.uraian.forEach((v,i)=>document.getElementById("uraian"+i).value=v);
+}
+loadData();
+
+// Kirim ke Google Sheet
+function kirim(){
+  let data=JSON.parse(localStorage.getItem("UPK_PBaik Nur, aku kirimkan versi **full HTML CBT PKN** yang sudah rapi ala UTBK, dengan alur jelas dan tombol **Mulai Ujian** berfungsi.  
+
+---
+
+### 📌 Full HTML CBT PKN
+
+```html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CBT PKN Paket C</title>
+
+<style>
+body{margin:0;font-family:Arial;background:#f4f4f4;user-select:none;-webkit-user-select:none;}
+
+.header{
+position:fixed;top:0;width:100%;
+background:#007bff;color:#fff;
+text-align:center;padding:10px;z-index:999
+}
+
+.logo{width:60px;display:block;margin:auto;}
+
+.container{
+max-width:600px; /* pas di HP */
+margin:auto;padding:10px;margin-top:160px
+}
+
+.hidden{display:none}
+
+#pglist li {margin-bottom:20px;line-height:1.5;}
+
+.opsi {
+  display:block;
+  padding:10px;
+  margin:6px 0;
+  border:1px solid #ccc;
+  border-radius:6px;
+  background:#fff;
+  cursor:pointer;
+  font-size:14px;
+  transition:all 0.2s ease;
+}
+.opsi.selected {
+  background:#28a745;
+  color:#fff;
+  border-color:#28a745;
+}
+
+button{
+width:100%;padding:12px;margin-top:10px;
+background:#007bff;color:#fff;border:none;border-radius:6px;
+font-size:15px;
+}
+
+input,textarea{
+width:100%;padding:10px;margin-top:5px;
+font-size:14px;
+box-sizing:border-box;
+}
+</style>
+</head>
+
+<body>
+<div class="header">
+  <img src="logo.png" class="logo">
+  <h2>UJIAN PENDIDIKAN KESETARAAN (UPK)</h2>
+  <h3>PKBM Ristek Nusantara Jaya</h3>
+</div>
+
+<div class="container">
+
+<!-- Identitas Peserta -->
+<section id="identitasSection">
+  <h3>Identitas Peserta</h3>
+  Nama Lengkap: <input id="nama">
+  <button onclick="nextSection('isianSection')">Mulai Ujian</button>
+</section>
+
+<!-- Isian -->
+<section id="isianSection" class="hidden">
+  <h3>Isian Singkat</h3>
+  <ul id="isianlist"></ul>
+  <button onclick="nextSection('pgSection')">Lanjut ke Pilihan Ganda</button>
+</section>
+
+<!-- Pilihan Ganda -->
+<section id="pgSection" class="hidden">
+  <h3>Pilihan Ganda</h3>
+  <ul id="pglist"></ul>
+  <button onclick="nextSection('uraianSection')">Lanjut ke Uraian</button>
+  <button onclick="nextSection('isianSection')">Kembali ke Isian</button>
+</section>
+
+<!-- Uraian -->
+<section id="uraianSection" class="hidden">
+  <h3>Uraian</h3>
+  <ul id="uraianlist"></ul>
+  <button onclick="nextSection('pgSection')">Kembali ke Pilihan Ganda</button>
+  <button onclick="kirim()">Kirim Jawaban</button>
+</section>
+
+</div>
+
+<script>
+const URL="https://script.google.com/macros/s/AKfycbzH9a-CMN3KBkbaNAI5At7zwe631DB348lbShyifZ0dmiMb3XT-d6eMapvxkWvuBhAJ/exec";
+const MAPEL="PKN";
+
+// Soal Isian
+let soalIsian=[
+"Nilai utama yang terkandung dalam sila keempat Pancasila adalah _____________ dalam pengambilan keputusan bersama.",
+"Warga negara memiliki hak dan kewajiban untuk _____________ dalam pemilihan umum.",
+"Salah satu bentuk pelaksanaan supremasi hukum di Indonesia adalah adanya _____________ dalam menyelesaikan sengketa konstitusi.",
+"Prinsip checks and balances dalam sistem pemerintahan bertujuan untuk mencegah terjadinya _____________ kekuasaan.",
+"Perwujudan sikap toleransi terhadap keberagaman suku dan agama merupakan bagian dari pengamalan sila _____________ Pancasila."
+];
+
+// Soal PG
+let soalPG=[
+["Nilai-nilai yang terkandung dalam Pancasila bersifat:",["Individualistis","Universal","Sekuler","Kapitalis"]],
+["Undang-Undang Dasar Negara Republik Indonesia Tahun 1945 merupakan:",["Undang-undang biasa","Peraturan pemerintah","Hukum dasar tertulis","Keputusan presiden"]],
+["Lembaga negara yang memiliki wewenang menguji undang-undang terhadap UUD 1945 adalah:",["DPR","Mahkamah Konstitusi","Presiden","Komisi Yudisial"]],
+["Hak asasi manusia yang dijamin dalam UUD 1945 mencakup, kecuali:",["Hak hidup","Hak kepemilikan pribadi","Hak monopoli atas sumber daya alam","Hak berpendapat"]],
+["Prinsip demokrasi yang diterapkan di Indonesia adalah:",["Demokrasi liberal","Demokrasi terpimpin","Demokrasi pancasila","Demokrasi totaliter"]]
+];
+
+// Soal Uraian
 let soalUraian=[
 "Jelaskan bagaimana prinsip musyawarah mufakat dapat diterapkan dalam menyelesaikan konflik di lingkungan sekolah!",
 "Analisislah dampak positif dan negatif globalisasi terhadap integrasi nasional Indonesia!",
@@ -196,83 +399,8 @@ loadData();
 function kirim(){
   let data=JSON.parse(localStorage.getItem("UPK_PKN")||"{}");
   fetch(URL,{method:"POST",body:JSON.stringify(data)})
-Baik Nur, aku tangkap jelas: kamu ingin sistem CBT PKN tampil **profesional ala UTBK universitas**, rapi di layar HP, dengan alur yang elegan. Jadi siswa SMA merasakan atmosfer ujian resmi.  
-
-### 🔧 Perbaikan yang aku lakukan:
-1. **Nama siswa di depan**: sebelum masuk ke soal, ada halaman identitas. Setelah isi nama → klik “Mulai Ujian” → baru masuk ke soal pertama.  
-2. **Header profesional**: logo sekolah, nama ujian (UPK), nama sekolah, fixed di atas.  
-3. **Layout responsif ala UTBK**: kotak soal dan opsi dibuat **max-width 600px** agar pas di layar HP, tidak melebar. Font size disesuaikan (14–15px).  
-4. **Navigasi antar section**: Isian → PG → Uraian → kembali sesuai kebutuhan → Kirim.  
-5. **Anti copas & anti screenshot** tetap aktif.  
-6. **Jawaban tersimpan otomatis** di localStorage, jadi aman saat refresh.  
-
----
-
-### 📌 Potongan inti HTML (rapi ala UTBK)
-
-```html
-<div class="header">
-  <img src="logo.png" class="logo">
-  <h2>UJIAN PENDIDIKAN KESETARAAN (UPK)</h2>
-  <h3>PKBM Ristek Nusantara Jaya</h3>
-</div>
-
-<div class="container">
-
-<!-- Identitas Peserta -->
-<section id="identitasSection">
-  <h3>Identitas Peserta</h3>
-  Nama Lengkap: <input id="nama">
-  <button onclick="nextSection('isianSection')">Mulai Ujian</button>
-</section>
-
-<!-- Isian -->
-<section id="isianSection" class="hidden">
-  <h3>Isian Singkat</h3>
-  <ul id="isianlist"></ul>
-  <button onclick="nextSection('pgSection')">Lanjut ke Pilihan Ganda</button>
-</section>
-
-<!-- Pilihan Ganda -->
-<section id="pgSection" class="hidden">
-  <h3>Pilihan Ganda</h3>
-  <ul id="pglist"></ul>
-  <button onclick="nextSection('uraianSection')">Lanjut ke Uraian</button>
-  <button onclick="nextSection('isianSection')">Kembali ke Isian</button>
-</section>
-
-<!-- Uraian -->
-<section id="uraianSection" class="hidden">
-  <h3>Uraian</h3>
-  <ul id="uraianlist"></ul>
-  <button onclick="nextSection('pgSection')">Kembali ke Pilihan Ganda</button>
-  <button onclick="kirim()">Kirim Jawaban</button>
-</section>
-
-// Load jawaban saat refresh
-function loadData(){
-  let data=JSON.parse(localStorage.getItem("UPK_PKN")||"{}");
-  if(data.nama) nama.value=data.nama;
-  if(data.isian) data.isian.forEach((v,i)=>document.getElementById("isian"+i).value=v);
-  if(data.pg) data.pg.forEach((v,i)=>{
-    if(v){
-      let r=document.querySelector(`.opsi[data-name="q${i}"][data-value="${v}"]`);
-      if(r) r.classList.add("selected");
-    }
-  });
-  if(data.uraian) data.uraian.forEach((v,i)=>document.getElementById("uraian"+i).value=v);
-}
-loadData();
-
-// Kirim ke Google Sheet
-function kirim(){
-  let data=JSON.parse(localStorage.getItem("UPK_PKN")||"{}");
-  fetch(URL,{
-    method:"POST",
-    body:JSON.stringify(data)
-  })
-  .then(r=>r.text())
-  .then(t=>alert("Jawaban terkirim: "+t));
+    .then(r=>r.text())
+    .then(t=>alert("Jawaban terkirim: "+t));
 }
 
 // Anti Screenshot sederhana
@@ -285,4 +413,3 @@ document.addEventListener("keydown",function(e){
 </script>
 </body>
 </html>
-
