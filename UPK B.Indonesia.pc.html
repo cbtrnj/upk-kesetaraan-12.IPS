@@ -3,69 +3,56 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CBT UPK FINAL</title>
+<title>CBT UPK FINAL PRO</title>
 
 <style>
 body{margin:0;font-family:Arial;background:#f4f4f4}
 
 .header{
-position:fixed;
-top:0;
-width:100%;
-background:#007bff;
-color:#fff;
-text-align:center;
-padding:10px;
-z-index:999
+position:fixed;top:0;width:100%;
+background:#007bff;color:#fff;
+text-align:center;padding:10px;z-index:999
 }
 
 .logo{width:60px}
-.subjudul{font-size:12px;margin:0}
 
 .container{
-padding:10px;
-max-width:900px;
-margin:auto;
-margin-top:200px;
+max-width:900px;margin:auto;padding:10px;margin-top:200px
 }
 
-@media (max-width:600px){
-.container{margin-top:230px;}
+@media(max-width:600px){
+.container{margin-top:230px}
 }
 
 .hidden{display:none}
+li{margin-bottom:15px}
 
 .opsi{
-display:block;
-padding:10px;
-margin:5px 0;
-border:1px solid #ccc;
-border-radius:8px;
-background:#fff
+display:block;padding:10px;margin:5px 0;
+border:1px solid #ccc;border-radius:8px;background:#fff
 }
 
 button{
-width:100%;
-padding:12px;
-margin-top:10px;
-background:#007bff;
-color:#fff;
-border:none;
-border-radius:6px
+width:100%;padding:12px;margin-top:10px;
+background:#007bff;color:#fff;border:none;border-radius:6px
 }
 
 input,textarea{width:100%;padding:10px;margin-top:5px}
+
+/* ANTI COPY */
+body{
+user-select:none;
+-webkit-user-select:none;
+}
 </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
 <div class="header">
 <img src="https://i.imgur.com/J1mKppg.png" class="logo">
 <h3>UJIAN PENDIDIKAN KESETARAAN (UPK)</h3>
-<p class="subjudul">PKBM Ristek Nusantara Jaya</p>
-<div id="timer">90:00</div>
+<p>PKBM Ristek Nusantara Jaya</p>
 </div>
 
 <div class="container">
@@ -115,9 +102,11 @@ input,textarea{width:100%;padding:10px;margin-top:5px}
 
 <script>
 
-const URL="https://script.google.com/macros/s/AKfycbyDPBrgL5cl8THtvJUvTQ01_HEIoHabNvMkNsRaCH4zbd-H_h_mhIhtfr44OGVBX-pX/exec";
+// ================= CONFIG =================
+const MAPEL = "BahasaIndonesia";
+const URL = "https://script.google.com/macros/s/AKfycbyDPBrgL5cl8THtvJUvTQ01_HEIoHabNvMkNsRaCH4zbd-H_h_mhIhtfr44OGVBX-pX/exec";
 
-// SOAL PG
+// ================= SOAL =================
 const soalPG = [
 ["Pernyataan tentang teknologi digital termasuk paragraf...",["Narasi","Deskripsi","Argumentasi","Persuasi"]],
 ["Ciri utama teks prosedur adalah...",["Menguraikan langkah-langkah secara berurutan","Mengandung unsur cerita dan tokoh","Menjelaskan peristiwa secara ilmiah","Membujuk pembaca"]],
@@ -166,11 +155,9 @@ const soalPG = [
 ["Bagian masalah diskusi...",["Argumen","Isu","Kesimpulan","Saran"]]
 ];
 
-// KUNCI
-const kunciPG=["C","A","B","B","A","C","C","B","B","B","A","D","A","D","C","B","B","B","D","B","B","B","B","C","A","C","A","B","A","B","C","A","A","B","C","C","B","A","C","B","B","C","B","B","B"];
+const kunciPG=[ "C","A","B","B","A","C","C","B","B","B","A","D","A","D","C","B","B","B","D","B","B","B","B","C","A","C","A","B","A","B","C","A","A","B","C","C","B","A","C","B","B","C","B","B","B"];
 
-// RENDER
-const pglist=document.getElementById("pglist");
+// render soal
 soalPG.forEach((s,i)=>{
 let html=`<li>${s[0]}`;
 s[1].forEach((o,j)=>{
@@ -181,11 +168,18 @@ html+=`</li>`;
 pglist.innerHTML+=html;
 });
 
-// NAV
+// ================= NAV =================
 function mulai(){
 if(!nama.value) return alert("Isi nama dulu");
+
+localStorage.setItem("nama_siswa", nama.value);
+
+document.documentElement.requestFullscreen?.();
+
 intro.classList.add("hidden");
 isian.classList.remove("hidden");
+
+setTimeout(loadData,500);
 }
 
 function kePG(){isian.classList.add("hidden");pg.classList.remove("hidden")}
@@ -193,22 +187,110 @@ function keUraian(){pg.classList.add("hidden");uraian.classList.remove("hidden")
 function kembaliIsian(){pg.classList.add("hidden");isian.classList.remove("hidden")}
 function kembaliPG(){uraian.classList.add("hidden");pg.classList.remove("hidden")}
 
-// KIRIM
-function kirim(){
-let nilai=0;
+// ================= AUTO SAVE =================
+function key(){
+let nama = localStorage.getItem("nama_siswa") || "anonim";
+return "cbt_"+MAPEL+"_"+nama;
+}
+
+document.addEventListener("change",()=>{
+let data={
+isian:[is1.value,is2.value,is3.value,is4.value,is5.value],
+pg:[],
+uraian:[u1.value,u2.value,u3.value,u4.value,u5.value]
+};
+
 for(let i=0;i<45;i++){
 let p=document.querySelector('input[name=q'+i+']:checked');
-if(p && p.value==kunciPG[i]) nilai++;
+data.pg.push(p?p.value:"");
 }
-let score=Math.round(nilai/45*100);
 
-fetch(URL,{
-method:"POST",
-body:JSON.stringify({nama:nama.value,score})
+localStorage.setItem(key(),JSON.stringify(data));
 });
 
-alert("Nilai: "+score);
+// LOAD
+function loadData(){
+let data=localStorage.getItem(key());
+if(!data) return;
+data=JSON.parse(data);
+
+for(let i=1;i<=5;i++) document.getElementById("is"+i).value=data.isian[i-1]||"";
+
+for(let i=0;i<45;i++){
+let v=data.pg[i];
+if(v){
+let r=document.querySelector(`input[name=q${i}][value=${v}]`);
+if(r) r.checked=true;
 }
+}
+
+for(let i=1;i<=5;i++) document.getElementById("u"+i).value=data.uraian[i-1]||"";
+}
+
+// AUTO LOAD
+window.onload=function(){
+let n=localStorage.getItem("nama_siswa");
+if(n){
+nama.value=n;
+intro.classList.add("hidden");
+isian.classList.remove("hidden");
+setTimeout(loadData,500);
+}
+};
+
+// ================= KIRIM =================
+function kirim(){
+
+let data={
+nama:nama.value,
+isian:[is1.value,is2.value,is3.value,is4.value,is5.value],
+pg:[],
+uraian:[u1.value,u2.value,u3.value,u4.value,u5.value],
+score:0
+};
+
+let benar=0;
+for(let i=0;i<45;i++){
+let p=document.querySelector('input[name=q'+i+']:checked');
+let j=p?p.value:"";
+data.pg.push(j);
+if(j===kunciPG[i]) benar++;
+}
+
+data.score=Math.round(benar/45*100);
+
+if(data.isian.includes("") || data.pg.includes("") || data.uraian.includes("")){
+alert("Masih ada soal kosong!");
+return;
+}
+
+// kirim
+let form=document.createElement("form");
+form.method="POST";
+form.action=URL;
+
+let input=document.createElement("input");
+input.name="data";
+input.value=JSON.stringify(data);
+
+form.appendChild(input);
+document.body.appendChild(form);
+form.submit();
+
+alert("Jawaban terkirim!");
+localStorage.removeItem(key());
+}
+
+// ================= ANTI CURANG =================
+document.addEventListener("contextmenu",e=>e.preventDefault());
+document.addEventListener("copy",e=>e.preventDefault());
+document.addEventListener("selectstart",e=>e.preventDefault());
+
+document.addEventListener("visibilitychange",()=>{
+if(document.hidden){
+alert("Jangan keluar dari ujian!");
+}
+});
 
 </script>
 
