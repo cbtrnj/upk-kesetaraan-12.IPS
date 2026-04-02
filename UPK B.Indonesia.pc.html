@@ -103,7 +103,7 @@ user-select:none;
 
 // ================= CONFIG =================
 const MAPEL = "BahasaIndonesia"; // beda mapel = ganti ini
-const URL = "https://script.google.com/macros/s/AKfycbzFTlmVJRTzpMe8vQuIiGXfgcZgdAfItu0RlLQTu0I9c4gV5M08JAn_8gEHwHad5SUS/exec";
+const URL = "https://script.google.com/macros/s/AKfycbzH9a-CMN3KBkbaNAI5At7zwe631DB348lbShyifZ0dmiMb3XT-d6eMapvxkWvuBhAJ/exec";
 
 // ================= STORAGE KEY =================
 function key(){
@@ -194,6 +194,7 @@ function kembaliPG(){uraian.classList.add("hidden");pg.classList.remove("hidden"
 function simpan(){
 let data={
 nama:nama.value,
+  matpel:MAPEL,
 isian:[is1.value,is2.value,is3.value,is4.value,is5.value],
 pg:[],
 uraian:[u1.value,u2.value,u3.value,u4.value,u5.value]
