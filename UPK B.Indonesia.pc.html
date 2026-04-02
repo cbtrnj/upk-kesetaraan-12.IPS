@@ -34,24 +34,25 @@ border:1px solid #ccc;border-radius:8px;background:#fff
 
 /* Tambahkan jarak antar soal */
 #pglist li {
-  margin-bottom: 25px;   /* lebih longgar antar soal */
-  line-height: 1.6;      /* teks lebih lega */
+  margin-bottom: 22px;   /* lebih longgar antar soal */
+  line-height: 1.5;      /* teks lebih lega */
 }
 
 /* Perbaiki tampilan opsi */
 .opsi {
   display: flex;         /* sejajarkan radio dan teks */
   align-items: center;
-  padding: 8px 12px;
+  padding: 6px 10px;
   margin: 6px 0;
   border: 1px solid #ccc;
-  border-radius: 8px;
+  border-radius: 6px;
   background: #fff;
+  font-size: 15px;       /* ukuran pas untuk layar HP */
 }
 
 /* Radio button diberi jarak dari teks */
 .opsi input[type="radio"] {
-  margin-right: 10px;
+  margin-right: 8px;
 }
   
 button{
@@ -188,7 +189,7 @@ soalPG.forEach((s,i)=>{
 let html=`<li>${s[0]}`;
 s[1].forEach((o,j)=>{
 let h=["A","B","C","D"][j];
-html+=`<label class="opsi"><input type="radio" name="q${i}" value="${h}"> ${h}. ${o}</label>`;
+html+=`<label class="opsi"><input type="radio" name="q${i}" value="${h}"> ${h}. ${o}</span></label>`;
 });
 html+=`</li>`;
 pglist.innerHTML+=html;
