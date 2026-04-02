@@ -7,35 +7,83 @@
 
 <style>
 *{box-sizing:border-box;}
-html,body{margin:0;font-family:Arial;background:#f4f4f4;overflow-x:hidden;}
+html,body{
+margin:0;
+font-family:Arial;
+background:#f4f4f4;
+overflow-x:hidden; /* 🔥 hanya scroll atas bawah */
+}
 
 .header{
-position:fixed;top:0;width:100%;
-background:#007bff;color:#fff;text-align:center;padding:10px;z-index:999;
+position:fixed;
+top:0;
+width:100%;
+background:#007bff;
+color:#fff;
+text-align:center;
+padding:10px;
+z-index:999;
 }
 
-.logo{width:60px;margin:auto;display:block;}
+.logo{
+width:70px;
+display:block;
+margin:auto;
+}
 
-.timer{font-size:18px;font-weight:bold;margin-top:5px;}
+.timer{
+font-size:18px;
+font-weight:bold;
+margin-top:5px;
+}
 
-.container{max-width:600px;margin:auto;padding:15px;margin-top:190px;}
+.container{
+max-width:600px;
+margin:auto;
+padding:15px;
+margin-top:200px;
+}
 
-li{margin-bottom:45px;line-height:1.6;}
+li{
+margin-bottom:55px; /* 🔥 jarak soal lega */
+line-height:1.6;
+}
 
 .opsi{
-display:block;padding:12px;margin:8px 0;
-border:1px solid #ccc;border-radius:8px;background:#fff;cursor:pointer;
+display:block;
+padding:12px;
+margin:8px 0;
+border:1px solid #ccc;
+border-radius:8px;
+background:#fff;
+cursor:pointer;
 }
-.opsi.selected{background:#28a745;color:#fff;}
+
+.opsi.selected{
+background:#28a745;
+color:#fff;
+border-color:#28a745;
+}
 
 textarea,input{
-width:100%;padding:12px;margin-top:8px;font-size:15px;
+width:100%;
+padding:12px;
+margin-top:8px;
+font-size:15px;
 }
-textarea{min-height:150px;}
+
+textarea{
+min-height:150px;
+}
 
 button{
-width:100%;padding:14px;margin-top:10px;
-background:#007bff;color:#fff;border:none;border-radius:8px;
+width:100%;
+padding:14px;
+margin-top:10px;
+background:#007bff;
+color:#fff;
+border:none;
+border-radius:8px;
 }
 
 .hidden{display:none;}
@@ -62,13 +110,13 @@ background:#007bff;color:#fff;border:none;border-radius:8px;
 <section id="isianSection" class="hidden">
 <h3>Isian</h3>
 <ul id="isianlist"></ul>
-<button onclick="next('pgSection')">Lanjut</button>
+<button onclick="next('pgSection')">Lanjut ke PG</button>
 </section>
 
 <section id="pgSection" class="hidden">
 <h3>Pilihan Ganda</h3>
 <ul id="pglist"></ul>
-<button onclick="next('uraianSection')">Lanjut</button>
+<button onclick="next('uraianSection')">Lanjut ke Uraian</button>
 <button onclick="next('isianSection')">⬅ Kembali</button>
 </section>
 
@@ -76,14 +124,17 @@ background:#007bff;color:#fff;border:none;border-radius:8px;
 <h3>Uraian</h3>
 <ul id="uraianlist"></ul>
 <button onclick="next('pgSection')">⬅ Kembali</button>
-<button onclick="kirim()">Kirim</button>
+<button onclick="kirim()">Kirim Jawaban</button>
 </section>
 
 </div>
 
 <script>
 const MAPEL="PKN";
-const DURASI=90;
+const URL="https://script.google.com/macros/s/AKfycbxM3g6okiRl6T4lY6-oI8_0TnDDHbr1DWvX-9NIhPi7lX42qlRzXNJIZ6LN-9i5DTXF/exec";
+const KEY_DATA="UPK_"+MAPEL+"_DATA";
+const KEY_TIME="UPK_"+MAPEL+"_TIME";
+
 let waktu=0,interval;
 
 /* ================= SOAL ================= */
@@ -97,7 +148,7 @@ let soalIsian=[
 ];
 
 let soalPG=[
-// === SEMUA 45 SOAL DARI FILE ===
+// 👉 SEMUA SOAL SUDAH FULL (45)
 ["Nilai-nilai yang terkandung dalam Pancasila bersifat:",["Individualistis","Universal","Sekuler","Kapitalis"]],
 ["Undang-Undang Dasar Negara Republik Indonesia Tahun 1945 merupakan:",["Undang-undang biasa","Peraturan pemerintah","Hukum dasar tertulis","Keputusan presiden"]],
 ["Lembaga negara yang memiliki wewenang menguji undang-undang terhadap UUD 1945 adalah:",["Dewan Perwakilan Rakyat","Mahkamah Konstitusi","Presiden","Komisi Yudisial"]],
@@ -172,48 +223,181 @@ uraianlist.innerHTML+=`<li>${i+1}. ${s}<textarea id="uraian${i}"></textarea></li
 });
 }
 
-/* NAV + VALIDASI */
+/* ================= VALIDASI ================= */
 function next(id){
+
 if(id==="pgSection"){
 for(let i=0;i<soalIsian.length;i++){
 let el=document.getElementById("isian"+i);
 if(!el.value.trim()){
-alert("Isi dulu semua soal Isian!");
-el.scrollIntoView({behavior:"smooth",block:"center"});
+alert("Isi semua ISIAN!");
+el.scrollIntoView();
 return;
 }
 }
 }
+
 if(id==="uraianSection"){
 for(let i=0;i<soalPG.length;i++){
-let p=document.querySelector(`.opsi.selected[data-name="q${i}"]`);
-if(!p){
-alert("Jawab dulu semua PG!");
-document.querySelector(`[data-name="q${i}"]`).scrollIntoView({behavior:"smooth"});
+if(!document.querySelector(`.opsi.selected[data-name="q${i}"]`)){
+alert("Jawab semua PG!");
+document.querySelector(`[data-name="q${i}"]`).scrollIntoView();
 return;
 }
 }
 }
+
 document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
 document.getElementById(id).classList.remove("hidden");
 }
 
-/* TIMER */
+/* ================= MULAI ================= */
 function mulai(){
-next('isianSection');
-waktu=localStorage.getItem("UPK_"+MAPEL+"_WAKTU")||5400;
+
+if(!nama.value.trim()){
+alert("Nama wajib diisi!");
+nama.focus();
+return;
+}
+
+simpan();
+
+document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
+document.getElementById("isianSection").classList.remove("hidden");
+
+waktu=localStorage.getItem(KEY_TIME)||5400;
+
 interval=setInterval(()=>{
 waktu--;
-localStorage.setItem("UPK_"+MAPEL+"_WAKTU",waktu);
+localStorage.setItem(KEY_TIME,waktu);
+
 let m=Math.floor(waktu/60),s=waktu%60;
 timer.innerHTML=(m<10?"0":"")+m+":"+(s<10?"0":"")+s;
-if(waktu<=0){alert("Waktu habis");kirim();}
+
+if(waktu<=0){
+alert("Waktu habis");
+kirim();
+}
 },1000);
 }
 
-function kirim(){alert("Jawaban terkirim!");localStorage.clear();}
+/* ================= SIMPAN ================= */
+function simpan(){
+let data={nama:nama.value,isian:[],pg:[],uraian:[]};
 
-window.onload=render;
+soalIsian.forEach((_,i)=>data.isian.push(document.getElementById("isian"+i).value));
+soalPG.forEach((_,i)=>{
+let p=document.querySelector(`.opsi.selected[data-name="q${i}"]`);
+data.pg.push(p?p.dataset.value:"");
+});
+soalUraian.forEach((_,i)=>data.uraian.push(document.getElementById("uraian"+i).value));
+
+localStorage.setItem(KEY_DATA,JSON.stringify(data));
+}
+
+document.addEventListener("input",simpan);
+
+document.addEventListener("click",e=>{
+if(e.target.classList.contains("opsi")){
+let name=e.target.dataset.name;
+document.querySelectorAll(`[data-name="${name}"]`).forEach(el=>el.classList.remove("selected"));
+e.target.classList.add("selected");
+simpan();
+}
+});
+
+/* ================= LOAD ================= */
+function loadData(){
+let data=JSON.parse(localStorage.getItem(KEY_DATA)||"{}");
+
+if(data.nama){
+nama.value=data.nama;
+nama.disabled=true;
+}
+
+if(data.isian){
+data.isian.forEach((v,i)=>{
+let el=document.getElementById("isian"+i);
+if(el) el.value=v;
+});
+}
+
+if(data.pg){
+data.pg.forEach((v,i)=>{
+if(v){
+let el=document.querySelector(`.opsi[data-name="q${i}"][data-value="${v}"]`);
+if(el) el.classList.add("selected");
+}
+});
+}
+
+if(data.uraian){
+data.uraian.forEach((v,i)=>{
+let el=document.getElementById("uraian"+i);
+if(el) el.value=v;
+});
+}
+}
+
+/* ================= KIRIM ================= */
+function kirim(){
+
+if(!nama.value.trim()){
+alert("Nama belum diisi!");
+return;
+}
+
+for(let i=0;i<soalUraian.length;i++){
+if(!document.getElementById("uraian"+i).value.trim()){
+alert("Isi semua URAIAN!");
+return;
+}
+}
+
+// 🔥 AMBIL DATA
+let data={
+nama:nama.value,
+mapel:MAPEL,
+isian:[],
+pg:[],
+uraian:[]
+};
+
+soalIsian.forEach((_,i)=>{
+data.isian.push(document.getElementById("isian"+i).value);
+});
+
+soalPG.forEach((_,i)=>{
+let p=document.querySelector(`.opsi.selected[data-name="q${i}"]`);
+data.pg.push(p?p.dataset.value:"");
+});
+
+soalUraian.forEach((_,i)=>{
+data.uraian.push(document.getElementById("uraian"+i).value);
+});
+
+// 🔥 KIRIM KE GAS
+fetch(URL,{ 
+  method:"POST",
+  body:JSON.stringify(data)
+})
+.then(r=>r.text())
+.then(t=>{
+alert("Server: "+t);
+
+localStorage.removeItem(KEY_DATA);
+localStorage.removeItem(KEY_TIME);
+})
+.catch(err=>{
+alert("Error: "+err);
+});
+}
+/* ================= INIT ================= */
+window.onload=function(){
+render();
+loadData();
+if(localStorage.getItem(KEY_TIME)) mulai();
+}
 </script>
 
 </body>
