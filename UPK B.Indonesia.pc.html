@@ -3,641 +3,150 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>UPK Bahasa Indonesia</title>
-
+<title>CBT UPK Bahasa Indonesia</title>
 <style>
-
-/* RESET */
-* { box-sizing: border-box; }
-
-/* BODY */
-body {
-  margin:0;
-  font-family: Arial, sans-serif;
-  background:#f4f4f4;
-}
-
-/* HEADER */
-.header {
-  position: fixed;
-  top:0;
-  width:100%;
-  background:#007bff;
-  color:#fff;
-  text-align:center;
-  z-index:1000;
-  padding:10px;
-}
-
-.header h2 { margin:5px 0; }
-
-#timer {
-  background:red;
-  padding:8px;
-  font-weight:bold;
-  font-size:18px;
-}
-
-/* CONTENT */
-.content {
-  margin-top:160px;
-  padding:15px;
-  max-width:800px;
-  margin:auto;
-}
-
-.hidden { display:none; }
-
-/* LIST */
-ol { padding-left:20px; }
-li { margin-bottom:15px; }
-
-label {
-  display:block;
-  margin:8px 0;
-  cursor:pointer;
-}
-
-input[type="radio"] {
-  transform: scale(1.2);
-  margin-right:8px;
-}
-
-/* INPUT */
-input, textarea {
-  width:100%;
-  padding:10px;
-  margin-top:5px;
-  border-radius:5px;
-  border:1px solid #ccc;
-}
-
-/* TEXTAREA */
-textarea { min-height:80px; }
-
-/* BUTTON */
-button {
-  display:block;
-  width:100%;
-  padding:10px;
-  margin-top:10px;
-  background:#007bff;
-  color:#fff;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
-}
-
-button:hover { background:#0056b3; }
-
-/* MOBILE */
-@media (max-width:600px){
-  .content { margin-top:120px; padding:10px; }
-  .header h2 { font-size:18px; }
-  #timer { font-size:16px; }
-}
-
+body{margin:0;font-family:Arial;background:#f4f4f4}
+.header{position:fixed;top:0;width:100%;background:#007bff;color:#fff;text-align:center;padding:10px;z-index:1000}
+.logo{width:50px;margin:auto;display:block}
+.subjudul{font-size:12px;margin:0}
+#timer{background:red;padding:6px;margin-top:5px}
+.content{position:fixed;top:170px;bottom:0;left:0;right:0;overflow-y:auto;padding:15px;max-width:800px;margin:auto}
+.hidden{display:none}
+.opsi{display:flex;gap:10px;padding:10px;margin:6px 0;border:2px solid #ddd;border-radius:10px;cursor:pointer}
+.opsi input{display:none}
+.huruf{background:#eee;padding:5px 10px;border-radius:6px;font-weight:bold}
+.opsi:has(input:checked){background:#e6f0ff;border-color:#007bff}
+.opsi input:checked + .huruf{background:#007bff;color:#fff}
+input,textarea{width:100%;padding:8px;margin-top:5px}
+button{width:100%;padding:10px;margin-top:10px;background:#007bff;color:#fff;border:none}
 </style>
 </head>
-
 <body>
 
 <div class="header">
-  <h2>UJIAN BAHASA INDONESIA</h2>
-  <div id="timer">90:00</div>
+<img src="https://i.imgur.com/J1mKppg.png" class="logo">
+<h3>UJIAN PENDIDIKAN KESETARAAN (UPK)</h3>
+<p class="subjudul">PKBM Ristek Nusantara Jaya</p>
+<div id="timer">90:00</div>
 </div>
 
-<!-- INTRO -->
 <div class="content" id="intro">
-  <input type="text" id="nama" placeholder="Masukkan Nama">
-  <button onclick="mulaiUjian()">Mulai Ujian</button>
+<input type="text" id="nama" placeholder="Masukkan Nama">
+<button onclick="mulai()">Mulai Ujian</button>
 </div>
 
-  <!-- Section Isian -->
-  <div class="content hidden section" id="sectionIsian">
-    <h3>Soal Isian Singkat</h3>
-    <ol>
-      <li>Dalam menulis surat lamaran pekerjaan, penggunaan bahasa yang _____________ sangat diperlukan agar surat terkesan profesional.<br><input type="text" id="isian1"></li>
-      <li>Kata “implementasi” dalam konteks pendidikan bermakna _____________.<br><input type="text" id="isian2"></li>
-      <li>Teks eksplanasi bertujuan untuk _____________ proses terjadinya suatu fenomena.<br><input type="text" id="isian3"></li>
-      <li>Sinonim dari kata “abstrak” adalah _____________.<br><input type="text" id="isian4"></li>
-      <li>Paragraf argumentatif biasanya mengandung _____________ yang mendukung pendapat penulis.<br><input type="text" id="isian5"></li>
-    </ol>
-    <button onclick="nextSection('sectionIsian','sectionPG')">Berikutnya</button>
+<div class="content hidden" id="isian">
+<h3>Isian Singkat</h3>
+<ol>
+<li>Dalam menulis surat lamaran pekerjaan, penggunaan bahasa yang ______ sangat diperlukan agar surat terkesan profesional.<input id="is1"></li>
+<li>Kata “implementasi” dalam konteks pendidikan bermakna ______.<input id="is2"></li>
+<li>Teks eksplanasi bertujuan untuk ______ proses terjadinya suatu fenomena.<input id="is3"></li>
+<li>Sinonim dari kata “abstrak” adalah ______.<input id="is4"></li>
+<li>Paragraf argumentatif biasanya mengandung ______ yang mendukung pendapat penulis.<input id="is5"></li>
+</ol>
+<button onclick="pindah('isian','pg')">Lanjut ke PG</button>
 </div>
 
-  <!-- Section PG -->
-<div class="content hidden section" id="sectionPG">
-  <h3>Soal Pilihan Ganda</h3>
-  <ol>
-  <li>“Teknologi digital telah mengubah cara orang berkomunikasi...” termasuk jenis paragraf...<br>
-    <label><input type="radio" name="pg1" value="A"> a.Narasi</label>
-    <label><input type="radio" name="pg1" value="B"> b.Deskripsi</label>
-    <label><input type="radio" name="pg1" value="C"> c. Argumentasi</label>
-    <label><input type="radio" name="pg1" value="D"> d. Persuasi</label>
-  </li>
-
-  <li>Berikut ini yang merupakan ciri utama teks prosedur adalah...<br>
-    <label><input type="radio" name="pg2" value="A"> a. Menguraikan langkah-langkah secara berurutan</label>
-    <label><input type="radio" name="pg2" value="B"> b. Mengandung unsur cerita dan tokoh</label>
-    <label><input type="radio" name="pg2" value="C"> c. Menjelaskan peristiwa secara ilmiah</label>
-    <label><input type="radio" name="pg2" value="D"> d. Membujuk pembaca agar melakukan sesuatu</label>
-  </li>
-
-  <li>Dalam teks pidato, fungsi kalimat pembuka adalah...<br>
-    <label><input type="radio" name="pg3" value="A"> a. Menyampaikan tujuan pidato</label>
-    <label><input type="radio" name="pg3" value="B"> b.Mengucapkan salam dan sapaan</label>
-    <label><input type="radio" name="pg3" value="C"> c. Memberikan argumen</label>
-    <label><input type="radio" name="pg3" value="D"> d. Menyimpulkan isi pidato</label>
-  </li>
-
-  <li>“Jika semua siswa membuang sampah pada tempatnya, sekolah akan menjadi bersih.” Makna implisit dari kalimat tersebut adalah...<br>
-    <label><input type="radio" name="pg4" value="A"> a. Siswa tidak peduli kebersihan</label>
-    <label><input type="radio" name="pg4" value="B"> b. Kebersihan sekolah tergantung perilaku siswa</label>
-    <label><input type="radio" name="pg4" value="C"> c. Tempat sampah tidak cukup</label>
-    <label><input type="radio" name="pg4" value="D"> d. Sekolah tidak butuh tempat sampah</label>
-  </li>
-
-  <li>Kata “transparan” pada kalimat “Pemerintah harus bersikap transparan dalam pengelolaan dana publik” berarti...<br>
-    <label><input type="radio" name="pg5" value="A"> Jelas dan terbuka</label>
-    <label><input type="radio" name="pg5" value="B"> Tertutup rapat</label>
-    <label><input type="radio" name="pg5" value="C"> Berbelit-belit</label>
-    <label><input type="radio" name="pg5" value="D"> Sulit dimengerti</label>
-  </li>
-
-    <li>Cermati teks berikut! “Siswa SMA Negeri 1 Jakarta berhasil memenangkan lomba debat tingkat nasional.” Kata “berhasil” dalam kalimat tersebut berfungsi sebagai...<br>
-    <label><input type="radio" name="pg6" value="A"> Kata benda</label>
-    <label><input type="radio" name="pg6" value="B"> Kata sifat</label>
-    <label><input type="radio" name="pg6" value="C"> Kata kerja</label>
-    <label><input type="radio" name="pg6" value="D"> Kata keterangan</label>
-  </li>
-
-  <li>Bacalah penggalan teks berikut: “Selain itu, penggunaan kendaraan listrik dapat mengurangi polusi udara.” Ide pokok paragraf di atas adalah...<br>
-    <label><input type="radio" name="pg7" value="A"> Polusi udara meningkat</label>
-    <label><input type="radio" name="pg7" value="B"> Kendaraan listrik menambah polusi</label>
-    <label><input type="radio" name="pg7" value="C"> Penggunaan kendaraan listrik dapat mengurangi polusi udara</label>
-    <label><input type="radio" name="pg7" value="D"> Kendaraan listrik tidak ramah lingkungan</label>
-  </li>
-
-  <li>Dalam debat, penyampaian sanggahan yang baik harus disertai dengan...<br>
-    <label><input type="radio" name="pg8" value="A"> Emosi tinggi</label>
-    <label><input type="radio" name="pg8" value="B"> Bukti dan alasan logis</label>
-    <label><input type="radio" name="pg8" value="C"> Nada suara keras</label>
-    <label><input type="radio" name="pg8" value="D"> Kata-kata kasar</label>
-  </li>
-
-  <li>Kalimat efektif di bawah ini adalah...<br>
-    <label><input type="radio" name="pg9" value="A"> Karena hujan deras, sehingga banjir melanda kota</label>
-    <label><input type="radio" name="pg9" value="B"> Banjir melanda kota karena hujan deras</label>
-    <label><input type="radio" name="pg9" value="C"> Banjir karena hujan deras melanda kota</label>
-    <label><input type="radio" name="pg9" value="D"> Karena banjir, hujan deras melanda kota</label>
-  </li>
-
-  <li>Sinonim kata “konklusi” adalah...<br>
-    <label><input type="radio" name="pg10" value="A"> Penjelasan</label>
-    <label><input type="radio" name="pg10" value="B"> Kesimpulan</label>
-    <label><input type="radio" name="pg10" value="C"> Perbandingan</label>
-    <label><input type="radio" name="pg10" value="D"> Penyangkalan</label>
-  </li>
-
-  <li>Dalam cerpen, konflik berfungsi untuk...<br>
-    <label><input type="radio" name="pg11" value="A"> Membuat cerita semakin menarik</label>
-    <label><input type="radio" name="pg11" value="B"> Mengulang kejadian</label>
-    <label><input type="radio" name="pg11" value="C"> Menjelaskan latar</label>
-    <label><input type="radio" name="pg11" value="D"> Menambah jumlah tokoh</label>
-  </li>
-
-  <li>Bacalah kalimat berikut: “Dia membaca buku dengan sungguh-sungguh.” Kata yang berfungsi sebagai keterangan cara pada kalimat di atas adalah...<br>
-    <label><input type="radio" name="pg12" value="A"> Dia</label>
-    <label><input type="radio" name="pg12" value="B"> Membaca</label>
-    <label><input type="radio" name="pg12" value="C"> Buku</label>
-    <label><input type="radio" name="pg12" value="D"> Sungguh-sungguh</label>
-  </li>
-
-  <li>Teks negosiasi biasanya berisi tentang...<br>
-    <label><input type="radio" name="pg13" value="A"> Penyelesaian masalah bersama</label>
-    <label><input type="radio" name="pg13" value="B"> Perdebatan tanpa akhir</label>
-    <label><input type="radio" name="pg13" value="C"> Pengutaraan perasaan</label>
-    <label><input type="radio" name="pg13" value="D"> Penjelasan ilmiah</label>
-  </li>
-
-  <li>Bacalah kutipan berikut: “Masyarakat harus sadar pentingnya penggunaan masker di masa pandemi.” Kata “harus” pada kalimat tersebut bermakna...<br>
-    <label><input type="radio" name="pg14" value="A"> Anjuran</label>
-    <label><input type="radio" name="pg14" value="B"> Larangan</label>
-    <label><input type="radio" name="pg14" value="C"> Keinginan</label>
-    <label><input type="radio" name="pg14" value="D"> Kewajiban</label>
-  </li>
-
-  <li>Paragraf deduktif adalah paragraf yang...<br>
-    <label><input type="radio" name="pg15" value="A"> Ide pokoknya terletak di akhir paragraf</label>
-    <label><input type="radio" name="pg15" value="B"> Ide pokoknya tersebar di seluruh paragraf</label>
-    <label><input type="radio" name="pg15" value="C"> Ide pokoknya di awal paragraf</label>
-    <label><input type="radio" name="pg15" value="D"> Tidak memiliki ide pokok</label>
-  </li>
-
-  <li>Kata baku dari “analisa” adalah...<br>
-    <label><input type="radio" name="pg16" value="A"> Analisa</label>
-    <label><input type="radio" name="pg16" value="B"> Analisis</label>
-    <label><input type="radio" name="pg16" value="C"> Menganalisa</label>
-    <label><input type="radio" name="pg16" value="D"> Analisisan</label>
-  </li>
-
-  <li>Teks eksposisi bertujuan untuk...<br>
-    <label><input type="radio" name="pg17" value="A"> Mempengaruhi pembaca</label>
-    <label><input type="radio" name="pg17" value="B"> Menjelaskan informasi</label>
-    <label><input type="radio" name="pg17" value="C"> Menghibur pembaca</label>
-    <label><input type="radio" name="pg17" value="D"> Menyampaikan cerita</label>
-  </li>
-
-  <li>Kalimat yang menggunakan majas personifikasi adalah...<br>
-    <label><input type="radio" name="pg18" value="A"> Matahari terbenam di ufuk barat</label>
-    <label><input type="radio" name="pg18" value="B"> Angin berbisik lembut di telingaku</label>
-    <label><input type="radio" name="pg18" value="C"> Air sungai mengalir deras</label>
-    <label><input type="radio" name="pg18" value="D"> Langit berwarna biru cerah</label>
-  </li>
-
-  <li>Dalam surat dinas, hal yang tidak boleh dilupakan adalah...<br>
-    <label><input type="radio" name="pg19" value="A"> Salam penutup</label>
-    <label><input type="radio" name="pg19" value="B"> Nama penerima</label>
-    <label><input type="radio" name="pg19" value="C"> Alamat pengirim</label>
-    <label><input type="radio" name="pg19" value="D"> Tanda tangan</label>
-  </li>
-
-  <li>Bacalah kalimat berikut: “Para siswa diharapkan dapat meningkatkan literasi digital.” Kata “literasi digital” bermakna...<br>
-    <label><input type="radio" name="pg20" value="A"> Kemampuan membaca buku fisik</label>
-    <label><input type="radio" name="pg20" value="B"> Kemampuan menggunakan teknologi informasi</label>
-    <label><input type="radio" name="pg20" value="C"> Belajar menulis tangan</label>
-    <label><input type="radio" name="pg20" value="D"> Membaca novel daring</label>
-  </li>
-
-  <li>Dalam cerpen, sudut pandang orang ketiga serba tahu berarti...<br>
-    <label><input type="radio" name="pg21" value="A"> Penulis sebagai tokoh utama</label>
-    <label><input type="radio" name="pg21" value="B"> Narator mengetahui segala hal tentang tokoh</label>
-    <label><input type="radio" name="pg21" value="C"> Cerita dari sudut pandang “aku”</label>
-    <label><input type="radio" name="pg21" value="D"> Tokoh menceritakan dirinya sendiri</label>
-  </li>
-
-  <li>Kalimat berikut yang termasuk kalimat pasif adalah...<br>
-    <label><input type="radio" name="pg22" value="A"> Siswa membaca buku di perpustakaan</label>
-    <label><input type="radio" name="pg22" value="B"> Buku itu dibaca oleh siswa</label>
-    <label><input type="radio" name="pg22" value="C"> Guru menjelaskan materi pelajaran</label>
-    <label><input type="radio" name="pg22" value="D"> Teman-teman bermain bola</label>
-  </li>
-
-  <li>Bacalah kutipan berikut: “Sampah plastik menimbulkan kerusakan lingkungan yang serius.” Kata “menimbulkan” pada kalimat tersebut bermakna...<br>
-    <label><input type="radio" name="pg23" value="A"> Mengurangi</label>
-    <label><input type="radio" name="pg23" value="B"> Membuat munculnya</label>
-    <label><input type="radio" name="pg23" value="C"> Menghilangkan</label>
-    <label><input type="radio" name="pg23" value="D"> Mengolah</label>
-  </li>
-
-  <li>Dalam teks laporan hasil observasi, bagian pernyataan umum berisi tentang...<br>
-    <label><input type="radio" name="pg24" value="A"> Ciri-ciri khusus objek</label>
-    <label><input type="radio" name="pg24" value="B"> Proses terjadinya objek</label>
-    <label><input type="radio" name="pg24" value="C"> Penjelasan umum tentang objek</label>
-    <label><input type="radio" name="pg24" value="D"> Hasil eksperimen</label>
-  </li>
-
-  <li>Bacalah kalimat berikut: “Karena tidak belajar, hasil ujian Rina kurang memuaskan.” Klausa sebab pada kalimat tersebut adalah...<br>
-    <label><input type="radio" name="pg25" value="A"> Karena tidak belajar</label>
-    <label><input type="radio" name="pg25" value="B"> Hasil ujian Rina kurang memuaskan</label>
-    <label><input type="radio" name="pg25" value="C"> Karena hasil ujian</label>
-    <label><input type="radio" name="pg25" value="D"> Rina kurang memuaskan</label>
-  </li>
-
-  <li>Kata “implementasi” dalam kalimat “Pemerintah mulai implementasi program kesehatan” berarti...<br>
-    <label><input type="radio" name="pg26" value="A"> Penolakan</label>
-    <label><input type="radio" name="pg26" value="B"> Penundaan</label>
-    <label><input type="radio" name="pg26" value="C"> Pelaksanaan</label>
-    <label><input type="radio" name="pg26" value="D"> Penyempurnaan</label>
-  </li>
-
-  <li>Bacalah penggalan teks berikut: “Dengan membaca buku, wawasan kita akan bertambah.” Hubungan antar kalimat di atas adalah...<br>
-    <label><input type="radio" name="pg27" value="A"> Sebab-akibat</label>
-    <label><input type="radio" name="pg27" value="B"> Perbandingan</label>
-    <label><input type="radio" name="pg27" value="C"> Pertentangan</label>
-    <label><input type="radio" name="pg27" value="D"> Penegasan</label>
-  </li>
-
-  <li>Dalam menulis teks eksplanasi, penggunaan data ilmiah bertujuan untuk...<br>
-    <label><input type="radio" name="pg28" value="A"> Menghibur pembaca</label>
-    <label><input type="radio" name="pg28" value="B"> Memperkuat penjelasan</label>
-    <label><input type="radio" name="pg28" value="C"> Mengulang informasi</label>
-    <label><input type="radio" name="pg28" value="D"> Menambah paragraf</label>
-  </li>
-
-  <li>Sinonim kata “urgensi” adalah...<br>
-    <label><input type="radio" name="pg29" value="A"> Kepentingan</label>
-    <label><input type="radio" name="pg29" value="B"> Keraguan</label>
-    <label><input type="radio" name="pg29" value="C"> Kebaikan</label>
-    <label><input type="radio" name="pg29" value="D"> Keuntungan</label>
-  </li>
-
-  <li>Bacalah kalimat berikut: “Siswa itu rajin, tetapi nilainya tetap rendah.” Hubungan antar kalimat di atas adalah hubungan...<br>
-    <label><input type="radio" name="pg30" value="A"> Sebab-akibat</label>
-    <label><input type="radio" name="pg30" value="B"> Pertentangan</label>
-    <label><input type="radio" name="pg30" value="C"> Penegasan</label>
-    <label><input type="radio" name="pg30" value="D"> Perbandingan</label>
-  </li>
-
-    <li>Kata “kreatif” berkaitan dengan kemampuan untuk...<br>
-    <label><input type="radio" name="pg31" value="A"> Mengikuti perintah</label>
-    <label><input type="radio" name="pg31" value="B"> Meniru karya orang lain</label>
-    <label><input type="radio" name="pg31" value="C"> Membuat sesuatu yang baru</label>
-    <label><input type="radio" name="pg31" value="D"> Mengulang informasi</label>
-  </li>
-
-  <li>Dalam membuat teks laporan, bagian simpulan berfungsi untuk...<br>
-    <label><input type="radio" name="pg32" value="A"> Merangkum hasil pengamatan</label>
-    <label><input type="radio" name="pg32" value="B"> Memperpanjang laporan</label>
-    <label><input type="radio" name="pg32" value="C"> Memperkenalkan objek</label>
-    <label><input type="radio" name="pg32" value="D"> Menambah data baru</label>
-  </li>
-
-  <li>Bacalah teks berikut: “Banjir yang melanda kota tersebut disebabkan oleh buruknya sistem drainase.” Ide utama kalimat di atas adalah...<br>
-    <label><input type="radio" name="pg33" value="A"> Buruknya sistem drainase</label>
-    <label><input type="radio" name="pg33" value="B"> Kota yang terkena banjir</label>
-    <label><input type="radio" name="pg33" value="C"> Banjir disebabkan oleh sesuatu</label>
-    <label><input type="radio" name="pg33" value="D"> Sistem drainase yang baik</label>
-  </li>
-
-  <li>Kata baku dari “praktek” adalah...<br>
-    <label><input type="radio" name="pg34" value="A"> Praktek</label>
-    <label><input type="radio" name="pg34" value="B"> Praktik</label>
-    <label><input type="radio" name="pg34" value="C"> Praktekan</label>
-    <label><input type="radio" name="pg34" value="D"> Praktikan</label>
-  </li>
-
-  <li>Bacalah kalimat berikut: “Setelah rapat selesai, para peserta pulang ke rumah masing-masing.” Kata “selesai” dalam kalimat tersebut berfungsi sebagai...<br>
-    <label><input type="radio" name="pg35" value="A"> Kata benda</label>
-    <label><input type="radio" name="pg35" value="B"> Kata kerja</label>
-    <label><input type="radio" name="pg35" value="C"> Kata sifat</label>
-    <label><input type="radio" name="pg35" value="D"> Kata bilangan</label>
-  </li>
-
-  <li>Dalam diskusi, moderator bertugas untuk...<br>
-    <label><input type="radio" name="pg36" value="A"> Membuat kesimpulan akhir</label>
-    <label><input type="radio" name="pg36" value="B"> Menyampaikan pendapat pribadi</label>
-    <label><input type="radio" name="pg36" value="C"> Mengatur jalannya diskusi</label>
-    <label><input type="radio" name="pg36" value="D"> Menulis notulen</label>
-  </li>
-
-  <li>Kalimat berikut yang mengandung makna konotatif adalah...<br>
-    <label><input type="radio" name="pg37" value="A"> Ayah bekerja di kantor</label>
-    <label><input type="radio" name="pg37" value="B"> Hatiku berbunga-bunga saat bertemu sahabat</label>
-    <label><input type="radio" name="pg37" value="C"> Ibu memasak di dapur</label>
-    <label><input type="radio" name="pg37" value="D"> Kakak membaca buku</label>
-  </li>
-
-  <li>Dalam teks persuasi, tujuan utamanya adalah...<br>
-    <label><input type="radio" name="pg38" value="A"> Meyakinkan pembaca agar melakukan sesuatu</label>
-    <label><input type="radio" name="pg38" value="B"> Menjelaskan proses</label>
-    <label><input type="radio" name="pg38" value="C"> Menghibur pembaca</label>
-    <label><input type="radio" name="pg38" value="D"> Menguraikan data</label>
-  </li>
-
-  <li>Bacalah kutipan berikut: “Pendidikan karakter sangat penting untuk membentuk generasi bangsa yang berintegritas.” Ide pokok kalimat di atas adalah...<br>
-    <label><input type="radio" name="pg39" value="A"> Pendidikan karakter penting</label>
-    <label><input type="radio" name="pg39" value="B"> Generasi bangsa berintegritas</label>
-    <label><input type="radio" name="pg39" value="C"> Pendidikan karakter membentuk generasi bangsa</label>
-    <label><input type="radio" name="pg39" value="D"> Integritas bangsa</label>
-  </li>
-
-  <li>Kata “efektif” dalam konteks pembelajaran berarti...<br>
-    <label><input type="radio" name="pg40" value="A"> Cepat selesai</label>
-    <label><input type="radio" name="pg40" value="B"> Sesuai tujuan dan hasilnya optimal</label>
-    <label><input type="radio" name="pg40" value="C"> Banyak materi</label>
-    <label><input type="radio" name="pg40" value="D"> Sulit dipahami</label>
-  </li>
-
-    <li>Bacalah kalimat berikut: “Para siswa berpartisipasi aktif dalam kegiatan bakti sosial.” Kata “berpartisipasi” berarti...<br>
-    <label><input type="radio" name="pg41" value="A"> Menonton acara</label>
-    <label><input type="radio" name="pg41" value="B"> Ikut serta dalam kegiatan</label>
-    <label><input type="radio" name="pg41" value="C"> Menyusun acara</label>
-    <label><input type="radio" name="pg41" value="D"> Mengawasi kegiatan</label>
-  </li>
-
-  <li>Dalam menulis teks ulasan film, bagian yang berisi penilaian terhadap film disebut...<br>
-    <label><input type="radio" name="pg42" value="A"> Orientasi</label>
-    <label><input type="radio" name="pg42" value="B"> Tafsiran</label>
-    <label><input type="radio" name="pg42" value="C"> Evaluasi</label>
-    <label><input type="radio" name="pg42" value="D"> Koda</label>
-  </li>
-
-  <li>Kata “mencerminkan” pada kalimat “Sikap jujur mencerminkan kepribadian baik” bermakna...<br>
-    <label><input type="radio" name="pg43" value="A"> Menyembunyikan</label>
-    <label><input type="radio" name="pg43" value="B"> Menunjukkan</label>
-    <label><input type="radio" name="pg43" value="C"> Menghilangkan</label>
-    <label><input type="radio" name="pg43" value="D"> Menutupi</label>
-  </li>
-
-  <li>Bacalah kutipan berikut: “Pemerintah mengimbau masyarakat untuk tidak mudah percaya pada berita hoaks.” Kata “hoaks” berarti...<br>
-    <label><input type="radio" name="pg44" value="A"> Informasi benar</label>
-    <label><input type="radio" name="pg44" value="B"> Informasi palsu</label>
-    <label><input type="radio" name="pg44" value="C"> Informasi lengkap</label>
-    <label><input type="radio" name="pg44" value="D"> Informasi resmi</label>
-  </li>
-
-  <li>Dalam teks diskusi, bagian yang memuat permasalahan disebut...<br>
-    <label><input type="radio" name="pg45" value="A"> Argumen</label>
-    <label><input type="radio" name="pg45" value="B"> Isu</label>
-    <label><input type="radio" name="pg45" value="C"> Kesimpulan</label>
-    <label><input type="radio" name="pg45" value="D"> Saran</label>
-  </li>
-  
-    </ol>
-   <button onclick="nextSection('sectionPG','sectionIsian')">Kembali</button>
-  <button onclick="nextSection('sectionPG','sectionUraian')">Berikutnya</button>
-</div>
-  <!-- Section Uraian -->
-  <div class="content hidden section" id="sectionUraian">
-    <h3>Soal Uraian</h3>
-    <ol>
-      <li>Jelaskan perbedaan utama antara teks eksposisi dan teks argumentasi beserta contohnya masing-masing!<br><textarea id="uraian1"></textarea></li>
-      <li>Berikan analisis tentang pentingnya penggunaan bahasa Indonesia yang baik dan benar di era digital saat ini!<br><textarea id="uraian2"></textarea></li>
-      <li>Analisis fenomena siswa lebih suka menonton video pembelajaran daripada membaca buku pelajaran beserta dampaknya terhadap literasi!<br><textarea id="uraian3"></textarea></li>
-      <li>Buatlah sebuah paragraf argumentatif yang membahas manfaat literasi digital untuk generasi muda!<br><textarea id="uraian4"></textarea></li>
-      <li>Jelaskan langkah-langkah utama dalam menulis teks pidato yang efektif dan menarik!<br><textarea id="uraian5"></textarea></li>
-    </ol>
-
-    <button onclick="nextSection('sectionUraian','sectionPG')">Kembali</button>
-  <button id="btnSubmit" onclick="submitUjian()">Kirim Jawaban</button>
+<div class="content hidden" id="pg">
+<h3>Pilihan Ganda</h3>
+<ol id="pglist"></ol>
+<button onclick="pindah('pg','isian')">Kembali</button>
+<button onclick="pindah('pg','uraian')">Lanjut ke Uraian</button>
 </div>
 
- <!-- Script Final -->
+<div class="content hidden" id="uraian">
+<h3>Uraian</h3>
+<ol>
+<li>Jelaskan perbedaan utama antara teks eksposisi dan teks argumentasi beserta contohnya masing-masing!<textarea></textarea></li>
+<li>Berikan analisis tentang pentingnya penggunaan bahasa Indonesia yang baik dan benar di era digital saat ini!<textarea></textarea></li>
+<li>Analisis fenomena siswa lebih suka menonton video pembelajaran dibanding membaca buku serta dampaknya!<textarea></textarea></li>
+<li>Buat paragraf argumentatif tentang manfaat literasi digital!<textarea></textarea></li>
+<li>Jelaskan langkah menulis teks pidato yang efektif!<textarea></textarea></li>
+</ol>
+<button onclick="pindah('uraian','pg')">Kembali</button>
+<button onclick="kirim()">Kirim</button>
+</div>
+
 <script>
-const URL = "https://script.google.com/macros/s/AKfycby536y9qUtLgW1RyVNHGC-4z3MQRECcDza8qp4p6O7IpMWmPCile7E1IGcR6F6zrEokFA/exec";
-const MAPEL_KEY = "bindo_paket_c";
+function mulai(){document.getElementById('intro').classList.add('hidden');document.getElementById('isian').classList.remove('hidden');}
+function pindah(a,b){document.getElementById(a).classList.add('hidden');document.getElementById(b).classList.remove('hidden');}
 
-// ================= STORAGE KEY =================
-const KEY_NAMA = MAPEL_KEY + "_nama";
-const KEY_JAWABAN = MAPEL_KEY + "_jawaban";
-const KEY_SELESAI = MAPEL_KEY + "_selesai";
+const soalPG = [
+["Pernyataan tentang teknologi digital termasuk paragraf...",["Narasi","Deskripsi","Argumentasi","Persuasi"]],
+["Ciri utama teks prosedur adalah...",["Menguraikan langkah-langkah secara berurutan","Mengandung unsur cerita dan tokoh","Menjelaskan peristiwa secara ilmiah","Membujuk pembaca"]],
+["Fungsi kalimat pembuka pidato adalah...",["Menyampaikan tujuan pidato","Mengucapkan salam dan sapaan","Memberikan argumen","Menyimpulkan isi pidato"]],
+["Makna implisit kalimat kebersihan sekolah...",["Siswa tidak peduli kebersihan","Kebersihan sekolah tergantung perilaku siswa","Tempat sampah tidak cukup","Sekolah tidak butuh tempat sampah"]],
+["Makna kata transparan adalah...",["Jelas dan terbuka","Tertutup rapat","Berbelit-belit","Sulit dimengerti"]],
+["Kata berhasil termasuk...",["Kata benda","Kata sifat","Kata kerja","Kata keterangan"]],
+["Ide pokok kendaraan listrik...",["Polusi udara meningkat","Menambah polusi","Mengurangi polusi udara","Tidak ramah lingkungan"]],
+["Dalam debat harus disertai...",["Emosi tinggi","Bukti dan alasan logis","Nada suara keras","Kata kasar"]],
+["Kalimat efektif adalah...",["Karena hujan deras sehingga banjir","Banjir melanda kota karena hujan deras","Banjir karena hujan deras melanda kota","Karena banjir hujan deras melanda"]],
+["Sinonim konklusi adalah...",["Penjelasan","Kesimpulan","Perbandingan","Penyangkalan"]],
+["Konflik cerpen berfungsi...",["Membuat cerita menarik","Mengulang kejadian","Menjelaskan latar","Menambah tokoh"]],
+["Keterangan cara adalah...",["Dia","Membaca","Buku","Sungguh-sungguh"]],
+["Teks negosiasi berisi...",["Penyelesaian masalah bersama","Perdebatan","Perasaan","Penjelasan ilmiah"]],
+["Makna kata harus...",["Anjuran","Larangan","Keinginan","Kewajiban"]],
+["Paragraf deduktif adalah...",["Ide di akhir","Tersebar","Ide di awal","Tidak ada ide"]],
+["Kata baku analisa...",["Analisa","Analisis","Menganalisa","Analisisan"]],
+["Teks eksposisi bertujuan...",["Mempengaruhi","Menjelaskan informasi","Menghibur","Cerita"]],
+["Majas personifikasi...",["Matahari terbenam","Angin berbisik lembut","Air mengalir","Langit biru"]],
+["Surat dinas wajib ada...",["Salam penutup","Nama penerima","Alamat pengirim","Tanda tangan"]],
+["Literasi digital berarti...",["Membaca buku","Menggunakan teknologi","Menulis tangan","Membaca novel"]],
+["Sudut pandang orang ketiga...",["Penulis tokoh","Narator tahu segalanya","Sudut aku","Tokoh sendiri"]],
+["Kalimat pasif adalah...",["Siswa membaca buku","Buku dibaca siswa","Guru menjelaskan","Teman bermain"]],
+["Makna menimbulkan...",["Mengurangi","Membuat muncul","Menghilangkan","Mengolah"]],
+["Pernyataan umum LHO...",["Ciri khusus","Proses","Penjelasan umum","Eksperimen"]],
+["Klausa sebab adalah...",["Karena tidak belajar","Hasil ujian","Karena hasil","Rina kurang"]],
+["Makna implementasi...",["Penolakan","Penundaan","Pelaksanaan","Penyempurnaan"]],
+["Hubungan kalimat membaca...",["Sebab-akibat","Perbandingan","Pertentangan","Penegasan"]],
+["Data ilmiah berfungsi...",["Menghibur","Memperkuat penjelasan","Mengulang","Menambah"]],
+["Sinonim urgensi...",["Kepentingan","Keraguan","Kebaikan","Keuntungan"]],
+["Hubungan kalimat rajin tetapi...",["Sebab-akibat","Pertentangan","Penegasan","Perbandingan"]],
+["Makna kreatif...",["Mengikuti","Meniru","Membuat baru","Mengulang"]],
+["Simpulan laporan...",["Merangkum","Memperpanjang","Memperkenalkan","Menambah"]],
+["Ide utama banjir...",["Drainase buruk","Kota banjir","Banjir disebabkan","Drainase baik"]],
+["Kata baku praktek...",["Praktek","Praktik","Praktekan","Praktikan"]],
+["Kata selesai adalah...",["Benda","Kerja","Sifat","Bilangan"]],
+["Moderator bertugas...",["Kesimpulan","Pendapat","Mengatur diskusi","Menulis"]],
+["Makna konotatif...",["Ayah bekerja","Hatiku berbunga","Ibu memasak","Kakak membaca"]],
+["Teks persuasi bertujuan...",["Meyakinkan","Menjelaskan","Menghibur","Data"]],
+["Ide pokok pendidikan karakter...",["Pendidikan penting","Generasi","Membentuk bangsa","Integritas"]],
+["Makna efektif...",["Cepat","Optimal","Banyak","Sulit"]],
+["Makna berpartisipasi...",["Menonton","Ikut serta","Menyusun","Mengawasi"]],
+["Penilaian film disebut...",["Orientasi","Tafsiran","Evaluasi","Koda"]],
+["Makna mencerminkan...",["Menyembunyikan","Menunjukkan","Menghilangkan","Menutupi"]],
+["Makna hoaks...",["Benar","Palsu","Lengkap","Resmi"]],
+["Bagian masalah diskusi...",["Argumen","Isu","Kesimpulan","Saran"]]
+];
 
-// ================= TIMER =================
-let waktu = 90 * 60;
-let timerInterval;
+const kunciPG=["C","A","B","B","A","C","C","B","B","B","A","D","A","D","C","B","B","B","D","B","B","B","B","C","A","C","A","B","A","B","C","A","A","B","C","C","B","A","C","B","B","C","B","B","B"];
 
-function mulaiTimer(){
-  timerInterval = setInterval(()=>{
-    waktu--;
-    const m = Math.floor(waktu/60);
-    const d = waktu % 60;
-
-    document.getElementById("timer").textContent =
-      m + " : " + (d<10?"0":"") + d;
-
-    if(waktu<=0){
-      clearInterval(timerInterval);
-      alert("Waktu habis!");
-      submitUjian();
-    }
-  },1000);
-}
-
-// ================= LOAD DATA =================
-window.onload = function(){
-  const nama = localStorage.getItem(KEY_NAMA);
-  const data = JSON.parse(localStorage.getItem(KEY_JAWABAN) || "{}");
-
-  if(nama){
-    document.getElementById("nama").value = nama;
-  }
-
-  // restore isian
-  for(let i=1;i<=5;i++){
-    if(data["isian"+i]){
-      document.getElementById("isian"+i).value = data["isian"+i];
-    }
-  }
-
-  // restore PG
-  for(let i=1;i<=45;i++){
-    if(data["pg"+i]){
-      const el = document.querySelector(`input[name="pg${i}"][value="${data["pg"+i]}"]`);
-      if(el) el.checked = true;
-    }
-  }
-
-  // restore uraian
-  for(let i=1;i<=5;i++){
-    if(data["uraian"+i]){
-      document.getElementById("uraian"+i).value = data["uraian"+i];
-    }
-  }
-};
-
-// ================= AUTO SAVE =================
-function simpanJawaban(){
-  let data = {};
-
-  for(let i=1;i<=5;i++){
-    data["isian"+i] = document.getElementById("isian"+i).value;
-  }
-
-  for(let i=1;i<=45;i++){
-    const el = document.querySelector('input[name="pg'+i+'"]:checked');
-    data["pg"+i] = el ? el.value : "";
-  }
-
-  for(let i=1;i<=5;i++){
-    data["uraian"+i] = document.getElementById("uraian"+i).value;
-  }
-
-  localStorage.setItem(KEY_JAWABAN, JSON.stringify(data));
-}
-
-// auto save tiap 2 detik
-setInterval(simpanJawaban, 2000);
-
-// ================= MULAI =================
-function mulaiUjian(){
-  const nama = document.getElementById("nama").value.trim();
-
-  if(!nama){
-    alert("Nama tidak boleh kosong!");
-    return;
-  }
-
-  localStorage.setItem(KEY_NAMA, nama);
-
-  document.getElementById("intro").classList.add("hidden");
-  document.getElementById("sectionIsian").classList.remove("hidden");
-
-  mulaiTimer();
-}
-
-// ================= NAVIGASI =================
-function nextSection(a,b){
-  document.getElementById(a).classList.add("hidden");
-  document.getElementById(b).classList.remove("hidden");
-}
-
-// ================= ANTI PINDAH TAB =================
-document.addEventListener("visibilitychange", function(){
-  if(document.hidden){
-    alert("Jangan keluar dari halaman ujian!");
-  }
+const pglist=document.getElementById('pglist');
+soalPG.forEach((s,i)=>{
+let html=`<li><p>${i+1}. ${s[0]}</p>`;
+s[1].forEach((o,j)=>{
+let h=String.fromCharCode(65+j);
+html+=`<label class='opsi'><input type='radio' name='q${i}' value='${h}'><span class='huruf'>${h}</span><span>${o}</span></label>`;
+});
+html+=`</li>`;
+pglist.innerHTML+=html;
 });
 
-// ================= SUBMIT =================
-function submitUjian(){
-  if(localStorage.getItem(KEY_SELESAI)){
-    alert("Anda sudah mengirim jawaban!");
-    return;
-  }
-  // 🔴 TAMBAHKAN DI SINI
-  if(!confirm("Yakin ingin mengirim jawaban?")){
-    return;
-  }
+let waktu=90*60;
+setInterval(()=>{
+waktu--;let m=Math.floor(waktu/60);let s=waktu%60;
+document.getElementById('timer').innerText=m+":"+(s<10?"0":"")+s;
+},1000);
 
-  clearInterval(timerInterval);
-
-  const btn = document.getElementById("btnSubmit");
-  btn.disabled = true;
-
-  const nama = localStorage.getItem(KEY_NAMA) || "";
-
-  if(!nama){
-    alert("Nama tidak boleh kosong!");
-    btn.disabled = false;
-    return;
-  }
-
-  const data = JSON.parse(localStorage.getItem(KEY_JAWABAN) || "{}");
-
-  fetch(URL, {
-    method:"POST",
-    mode:"no-cors",
-    body: JSON.stringify({
-      nama: nama,
-      mapel: "Bahasa Indonesia Paket C",
-      data: data
-    })
-  })
-  .then(()=>{
-
-    localStorage.setItem(KEY_SELESAI, "true");
-
-    // bersihkan data
-    localStorage.removeItem(KEY_JAWABAN);
-    localStorage.removeItem(KEY_NAMA);
-
-    document.body.innerHTML = `
-      <div style="text-align:center;padding:50px;">
-        <h2>Terima kasih!</h2>
-        <p>Jawaban berhasil dikirim.</p>
-      </div>
-    `;
-  })
-  .catch(err=>{
-    alert("Gagal kirim: " + err);
-    btn.disabled = false;
-  });
+function kirim(){
+let benar=0;
+soalPG.forEach((s,i)=>{
+let p=document.querySelector(`input[name=q${i}]:checked`);
+if(p && p.value===kunciPG[i]) benar++;
+});
+alert("Nilai PG: "+benar+"/"+soalPG.length);
 }
-window.onbeforeunload = function(){
-  return "Jawaban Anda belum dikirim!";
-};
 </script>
+
 </body>
 </html>
