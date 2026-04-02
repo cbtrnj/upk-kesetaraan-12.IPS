@@ -25,36 +25,33 @@ max-width:900px;margin:auto;padding:10px;margin-top:200px
 }
 
 .hidden{display:none}
-li{margin-bottom:15px}
 
-.opsi{
-display:block;padding:10px;margin:5px 0;
-border:1px solid #ccc;border-radius:8px;background:#fff
-}
-
-/* Tambahkan jarak antar soal */
+/* 🔧 Jarak antar soal */
 #pglist li {
-  margin-bottom: 22px;   /* lebih longgar antar soal */
-  line-height: 1.5;      /* teks lebih lega */
+  margin-bottom: 24px;
+  line-height: 1.5;
 }
 
-/* Perbaiki tampilan opsi */
+/* 🔧 Tampilan opsi ala UTBK */
 .opsi {
-  display: flex;         /* sejajarkan radio dan teks */
-  align-items: center;
-  padding: 6px 10px;
-  margin: 6px 0;
+  display: inline-block;
+  padding: 10px 16px;
+  margin: 6px;
   border: 1px solid #ccc;
   border-radius: 6px;
   background: #fff;
-  font-size: 15px;       /* ukuran pas untuk layar HP */
+  cursor: pointer;
+  font-size: 15px;
+  transition: all 0.2s ease;
 }
 
-/* Radio button diberi jarak dari teks */
-.opsi input[type="radio"] {
-  margin-right: 8px;
+/* 🔧 Saat dipilih */
+.opsi.selected {
+  background: #28a745;   /* hijau */
+  color: #fff;
+  border-color: #28a745;
 }
-  
+
 button{
 width:100%;padding:12px;margin-top:10px;
 background:#007bff;color:#fff;border:none;border-radius:6px
