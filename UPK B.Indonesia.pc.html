@@ -7,42 +7,77 @@
 
 <style>
 body{margin:0;font-family:Arial;background:#f4f4f4}
-.header{position:fixed;top:0;width:100%;background:#007bff;color:#fff;text-align:center;padding:10px;z-index:999}
-.timer{font-weight:bold}
-.container{margin-top:200px;padding:10px;max-width:900px;margin:auto}
-.hidden{display:none}
-  @media (max-width:600px){
+
+.header{
+position:fixed;
+top:0;
+width:100%;
+background:#007bff;
+color:#fff;
+text-align:center;
+padding:10px;
+z-index:999
+}
+
+.logo{width:60px}
+.subjudul{font-size:12px;margin:0}
+
 .container{
-margin-top:230px;
+padding:10px;
+max-width:900px;
+margin:auto;
+margin-top:200px;
 }
+
+@media (max-width:600px){
+.container{margin-top:230px;}
 }
 
-.nav{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
-.nav button{width:40px;height:40px;border:none;background:#ccc;border-radius:6px}
-.nav button.aktif{background:#007bff;color:#fff}
-.nav button.sudah{background:#28a745;color:#fff}
+.hidden{display:none}
 
-.opsi{display:flex;gap:10px;padding:10px;margin:5px 0;border:2px solid #ddd;border-radius:10px;background:#fff}
-.opsi input{display:none}
-.opsi input:checked + span{background:#007bff;color:#fff;padding:5px;border-radius:5px}
+.opsi{
+display:block;
+padding:10px;
+margin:5px 0;
+border:1px solid #ccc;
+border-radius:8px;
+background:#fff
+}
 
-button{width:100%;padding:12px;margin-top:10px;background:#007bff;color:#fff;border:none;border-radius:6px}
+button{
+width:100%;
+padding:12px;
+margin-top:10px;
+background:#007bff;
+color:#fff;
+border:none;
+border-radius:6px
+}
+
 input,textarea{width:100%;padding:10px;margin-top:5px}
 </style>
 </head>
 
 <body>
 
+<!-- HEADER -->
 <div class="header">
+<img src="https://i.imgur.com/J1mKppg.png" class="logo">
 <h3>UJIAN PENDIDIKAN KESETARAAN (UPK)</h3>
-<p>Bahasa Indonesia</p>
-<div class="timer" id="timer"></div>
+<p class="subjudul">PKBM Ristek Nusantara Jaya</p>
+<div id="timer">90:00</div>
 </div>
 
 <div class="container">
 
+<!-- LOGIN -->
+<div id="intro">
+<input type="text" id="nama" placeholder="Masukkan Nama Lengkap">
+<button onclick="mulai()">Mulai Ujian</button>
+</div>
+
 <!-- ISIAN -->
-<div id="isian">
+<div id="isian" class="hidden">
 <h3>Isian Singkat</h3>
 <ol>
 <li>Dalam menulis surat lamaran pekerjaan, penggunaan bahasa yang ______ sangat diperlukan agar surat terkesan profesional.<input id="is1"></li>
@@ -57,12 +92,8 @@ input,textarea{width:100%;padding:10px;margin-top:5px}
 <!-- PG -->
 <div id="pg" class="hidden">
 <h3>Pilihan Ganda</h3>
-<div class="nav" id="nav"></div>
-<div id="soal"></div>
-
-<button onclick="kembaliIsian()">⬅ Kembali ke Isian</button>
-<button onclick="prev()">⬅ Sebelumnya</button>
-<button onclick="next()">Selanjutnya ➡</button>
+<ol id="pglist"></ol>
+<button onclick="kembaliIsian()">⬅ Kembali</button>
 <button onclick="keUraian()">Lanjut ke Uraian</button>
 </div>
 
@@ -73,10 +104,10 @@ input,textarea{width:100%;padding:10px;margin-top:5px}
 <li>Jelaskan perbedaan utama antara teks eksposisi dan teks argumentasi beserta contohnya masing-masing!<textarea id="u1"></textarea></li>
 <li>Berikan analisis tentang pentingnya penggunaan bahasa Indonesia yang baik dan benar di era digital saat ini!<textarea id="u2"></textarea></li>
 <li>Analisis fenomena siswa yang lebih suka menonton video pembelajaran dibanding membaca buku serta dampaknya!<textarea id="u3"></textarea></li>
-<li>Buatlah paragraf argumentatif tentang manfaat literasi digital!<textarea id="u4"></textarea></li>
-<li>Jelaskan langkah-langkah menulis teks pidato yang efektif!<textarea id="u5"></textarea></li>
+<li>Buat paragraf argumentatif tentang manfaat literasi digital!<textarea id="u4"></textarea></li>
+<li>Jelaskan langkah menulis teks pidato yang efektif!<textarea id="u5"></textarea></li>
 </ol>
-<button onclick="kembaliPG()">⬅ Kembali ke PG</button>
+<button onclick="kembaliPG()">⬅ Kembali</button>
 <button onclick="kirim()">Kirim</button>
 </div>
 
@@ -84,11 +115,9 @@ input,textarea{width:100%;padding:10px;margin-top:5px}
 
 <script>
 
-// ===== CONFIG =====
 const URL="https://script.google.com/macros/s/AKfycbzGNFy2wsgRlV3qCwZbprIq7H5tPXZF-w91jK4RsyzMtS41yOAIq6-EeYiNFxoNQSwi/exec";
-const DURASI=90*60;
 
-// ===== SOAL PG (45 SOAL LENGKAP) =====
+// SOAL PG
 const soalPG = [
 ["Pernyataan tentang teknologi digital termasuk paragraf...",["Narasi","Deskripsi","Argumentasi","Persuasi"]],
 ["Ciri utama teks prosedur adalah...",["Menguraikan langkah-langkah secara berurutan","Mengandung unsur cerita dan tokoh","Menjelaskan peristiwa secara ilmiah","Membujuk pembaca"]],
@@ -137,122 +166,49 @@ const soalPG = [
 ["Bagian masalah diskusi...",["Argumen","Isu","Kesimpulan","Saran"]]
 ];
 
-// ===== KUNCI =====
-const kunciPG=[
-"C","A","B","B","A","C","C","B","B","B",
-"A","D","A","D","C","B","B","B","D","B",
-"B","B","B","C","A","C","A","B","A","B",
-"C","A","A","B","C","C","B","A","C","B",
-"B","C","B","B","B"
-];
-
-// ===== SISTEM =====
-let index=0;
-let jawaban=new Array(45).fill("");
-let waktu=DURASI;
-
-// NAV
-const nav=document.getElementById("nav");
-for(let i=0;i<45;i++){
-let b=document.createElement("button");
-b.innerText=i+1;
-b.onclick=()=>{index=i;render()};
-nav.appendChild(b);
-}
+// KUNCI
+const kunciPG=["C","A","B","B","A","C","C","B","B","B","A","D","A","D","C","B","B","B","D","B","B","B","B","C","A","C","A","B","A","B","C","A","A","B","C","C","B","A","C","B","B","C","B","B","B"];
 
 // RENDER
-function render(){
-let s=soalPG[index];
-let html=`<h4>Soal ${index+1}</h4><p>${s[0]}</p>`;
-s[1].forEach((o,i)=>{
-let h=["A","B","C","D"][i];
-html+=`<label class="opsi"><input type="radio" value="${h}" ${jawaban[index]==h?'checked':''}><span>${h}</span> ${o}</label>`;
+const pglist=document.getElementById("pglist");
+soalPG.forEach((s,i)=>{
+let html=`<li>${s[0]}`;
+s[1].forEach((o,j)=>{
+let h=["A","B","C","D"][j];
+html+=`<label class="opsi"><input type="radio" name="q${i}" value="${h}"> ${h}. ${o}</label>`;
 });
-soal.innerHTML=html;
-
-document.querySelectorAll("input").forEach(r=>{
-r.onchange=()=>{jawaban[index]=r.value;save();}
+html+=`</li>`;
+pglist.innerHTML+=html;
 });
-}
 
 // NAV
-function next(){if(index<44){index++;render()}}
-function prev(){if(index>0){index--;render()}}
-
-// HALAMAN
-function kePG(){isian.classList.add("hidden");pg.classList.remove("hidden");render();}
-function keUraian(){pg.classList.add("hidden");uraian.classList.remove("hidden");}
-function kembaliIsian(){pg.classList.add("hidden");isian.classList.remove("hidden");}
-function kembaliPG(){uraian.classList.add("hidden");pg.classList.remove("hidden");}
-
-// SAVE
-function save(){
-localStorage.setItem("cbt",JSON.stringify({
-isian:[is1.value,is2.value,is3.value,is4.value,is5.value],
-pg:jawaban,
-uraian:[u1.value,u2.value,u3.value,u4.value,u5.value],
-waktu
-}));
+function mulai(){
+if(!nama.value) return alert("Isi nama dulu");
+intro.classList.add("hidden");
+isian.classList.remove("hidden");
 }
 
-// LOAD
-function load(){
-let d=localStorage.getItem("cbt");
-if(!d) return;
-d=JSON.parse(d);
-[is1,is2,is3,is4,is5].forEach((e,i)=>e.value=d.isian[i]||"");
-[u1,u2,u3,u4,u5].forEach((e,i)=>e.value=d.uraian[i]||"");
-jawaban=d.pg||jawaban;
-waktu=d.waktu||waktu;
-}
-
-// TIMER
-setInterval(()=>{
-waktu--;
-let m=Math.floor(waktu/60);
-let s=waktu%60;
-timer.innerText=m.toString().padStart(2,'0')+":"+s.toString().padStart(2,'0');
-save();
-if(waktu<=0) kirim();
-},1000);
-
-// VALIDASI
-function validasi(){
-for(let i=1;i<=5;i++) if(!window["is"+i].value) return alert("Isian belum lengkap"),false;
-for(let i=0;i<45;i++) if(!jawaban[i]) return alert("PG belum lengkap"),false;
-for(let i=1;i<=5;i++) if(!window["u"+i].value) return alert("Uraian belum lengkap"),false;
-return true;
-}
+function kePG(){isian.classList.add("hidden");pg.classList.remove("hidden")}
+function keUraian(){pg.classList.add("hidden");uraian.classList.remove("hidden")}
+function kembaliIsian(){pg.classList.add("hidden");isian.classList.remove("hidden")}
+function kembaliPG(){uraian.classList.add("hidden");pg.classList.remove("hidden")}
 
 // KIRIM
 function kirim(){
-if(!validasi()) return;
-
 let nilai=0;
-for(let i=0;i<45;i++) if(jawaban[i]==kunciPG[i]) nilai++;
-
+for(let i=0;i<45;i++){
+let p=document.querySelector('input[name=q'+i+']:checked');
+if(p && p.value==kunciPG[i]) nilai++;
+}
 let score=Math.round(nilai/45*100);
 
 fetch(URL,{
 method:"POST",
-body:JSON.stringify({
-isian:[is1.value,is2.value,is3.value,is4.value,is5.value],
-pg:jawaban,
-uraian:[u1.value,u2.value,u3.value,u4.value,u5.value],
-score
-})
+body:JSON.stringify({nama:nama.value,score})
 });
 
 alert("Nilai: "+score);
-localStorage.removeItem("cbt");
 }
-
-// SECURITY
-document.addEventListener("contextmenu",e=>e.preventDefault());
-document.addEventListener("copy",e=>e.preventDefault());
-
-load();
-render();
 
 </script>
 
