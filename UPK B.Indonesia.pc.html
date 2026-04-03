@@ -3,37 +3,87 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CBT Bahasa Indonesia</title>
+<title>CBT PKN</title>
 
 <style>
 *{box-sizing:border-box;}
-html,body{margin:0;font-family:Arial;background:#f4f4f4;overflow-x:hidden;}
+html,body{
+margin:0;
+font-family:Arial;
+background:#f4f4f4;
+overflow-x:hidden; /* 🔥 hanya scroll atas bawah */
+}
 
 .header{
-position:fixed;top:0;width:100%;
-background:#007bff;color:#fff;text-align:center;padding:10px;z-index:999;
+position:fixed;
+top:0;
+width:100%;
+background:#007bff;
+color:#fff;
+text-align:center;
+padding:10px;
+z-index:999;
 }
 
-.logo{width:70px;display:block;margin:auto;}
-.timer{font-size:18px;font-weight:bold;margin-top:5px;}
+.logo{
+width:70px;
+display:block;
+margin:auto;
+}
 
-.container{max-width:600px;margin:auto;padding:15px;margin-top:200px;}
-li{margin-bottom:55px;line-height:1.6;}
+.timer{
+font-size:18px;
+font-weight:bold;
+margin-top:5px;
+}
+
+.container{
+max-width:600px;
+margin:auto;
+padding:15px;
+margin-top:200px;
+}
+
+li{
+margin-bottom:55px; /* 🔥 jarak soal lega */
+line-height:1.6;
+}
 
 .opsi{
-display:block;padding:12px;margin:8px 0;
-border:1px solid #ccc;border-radius:8px;background:#fff;cursor:pointer;
+display:block;
+padding:12px;
+margin:8px 0;
+border:1px solid #ccc;
+border-radius:8px;
+background:#fff;
+cursor:pointer;
 }
-.opsi.selected{background:#28a745;color:#fff;border-color:#28a745;}
+
+.opsi.selected{
+background:#28a745;
+color:#fff;
+border-color:#28a745;
+}
 
 textarea,input{
-width:100%;padding:12px;margin-top:8px;font-size:15px;
+width:100%;
+padding:12px;
+margin-top:8px;
+font-size:15px;
 }
-textarea{min-height:150px;}
+
+textarea{
+min-height:150px;
+}
 
 button{
-width:100%;padding:14px;margin-top:10px;
-background:#007bff;color:#fff;border:none;border-radius:8px;
+width:100%;
+padding:14px;
+margin-top:10px;
+background:#007bff;
+color:#fff;
+border:none;
+border-radius:8px;
 }
 
 .hidden{display:none;}
@@ -46,7 +96,7 @@ background:#007bff;color:#fff;border:none;border-radius:8px;
 <img src="https://i.imgur.com/J1mKppg.png" class="logo">
 <div>UJIAN PENDIDIKAN KESETARAAN (UPK)</div>
 <div>PKBM Ristek Nusantara Jaya</div>
-<div>UPK Bahasa Indonesia</div>
+  <div>UPK PKN</div>
 <div id="timer">90:00</div>
 </div>
 
@@ -89,7 +139,6 @@ const KEY_TIME="UPK_"+MAPEL+"_TIME";
 let waktu=0,interval;
 
 /* ================= SOAL ================= */
-
 let soalIsian=[
 "Dalam menulis surat lamaran pekerjaan, penggunaan bahasa yang _____________ sangat diperlukan agar surat terkesan profesional.",
 "Kata “implementasi” dalam konteks pendidikan bermakna _____________.",
